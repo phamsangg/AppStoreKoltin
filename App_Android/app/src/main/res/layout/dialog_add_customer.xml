@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="200dp"
+    android:layout_height="400dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:gravity="center"
+        android:text="Create Customer"
+        android:textColor="@color/colorPrimaryDark"
+        android:textSize="25dp"
+        android:textStyle="bold"
+        android:background="#efefed"/>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:background="#efefed">
+
+        <EditText
+            android:id="@+id/SoDienThoai"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:background="#ffffff"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:padding="10dp"
+            android:textSize="14dp"
+            android:hint="Số Điện Thoại"/>
+
+        <EditText
+            android:id="@+id/Tên"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/SoDienThoai"
+            android:layout_centerHorizontal="true"
+            android:background="#ffffff"            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:padding="10dp"
+            android:textSize="14dp"
+            android:hint="Tên"/>
+
+        <EditText
+            android:hint="Địa Chỉ"
+            android:background="#ffffff"            android:id="@+id/DiaChi"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/Ten"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:padding="10dp"
+            android:textSize="14dp" />
+
+        <EditText
+            android:hint="CMND"
+            android:background="#ffffff"            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/DiaChi"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:padding="10dp"
+            android:textSize="14dp" />
+
+    </LinearLayout>
+
+</LinearLayout>
+
