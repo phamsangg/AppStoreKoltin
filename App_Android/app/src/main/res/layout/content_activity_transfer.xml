@@ -5,18 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.duyhung.app_android.view.MainActivity"
-    tools:showIn="@layout/activity_main">
+    tools:context="com.example.duyhung.app_android.view.ActivityTransfer"
+    tools:showIn="@layout/app_bar_activity_transfer">
 
     <ListView
-        android:id="@+id/lvCustomer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/list_transfer"
         android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-
-    </ListView>
-
-
+        android:paddingRight="10dp"></ListView>
 
 </android.support.constraint.ConstraintLayout>

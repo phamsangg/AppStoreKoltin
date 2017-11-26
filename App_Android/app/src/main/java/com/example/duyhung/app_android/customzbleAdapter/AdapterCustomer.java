@@ -2,7 +2,6 @@ package com.example.duyhung.app_android.customzbleAdapter;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
@@ -22,13 +21,11 @@ import java.util.List;
 
 public class AdapterCustomer extends ArrayAdapter<Customer> {
 
-    private List<Customer> customerList;
     private int resource;
 
     public AdapterCustomer(@NonNull Context context, int resource, @NonNull List<Customer> objects) {
         super(context, resource, objects);
         this.resource = resource;
-        this.customerList = objects;
     }
 
     @NonNull
@@ -39,7 +36,7 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
             viewHolder = new ViewHolder();
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(resource, null);
-            viewHolder.name = (TextView) convertView.findViewById(R.id.name);
+            viewHolder.name = (TextView) convertView.findViewById(R.id.name_customer);
             viewHolder.phone_number = (TextView) convertView.findViewById(R.id.phone_number);
             convertView.setTag(viewHolder);
         } else {
