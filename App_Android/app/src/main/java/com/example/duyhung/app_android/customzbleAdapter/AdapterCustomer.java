@@ -46,7 +46,7 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
         Customer customer = getItem(position);
 
         viewHolder.name.setText(customer.getName());
-        viewHolder.phone_number.setText(customer.getPhoneNumber());
+        viewHolder.phone_number.setText(customer.getPhone_number());
 
         return convertView;
     }

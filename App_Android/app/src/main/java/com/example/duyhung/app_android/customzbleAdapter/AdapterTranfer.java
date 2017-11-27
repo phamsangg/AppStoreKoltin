@@ -46,8 +46,8 @@ public class AdapterTranfer extends ArrayAdapter<Transfer> {
 
         Transfer transfer  = getItem(position);
 
-        viewHolder.nameProduct.setText(transfer.getNameProduction());
-        viewHolder.date.setText(transfer.getDate().toString());
+        viewHolder.nameProduct.setText(transfer.getItem());
+        viewHolder.date.setText(transfer.getDate_transfer().toString());
         viewHolder.money.setText(transfer.getMoney());
 
         return convertView;
