@@ -54,4 +54,14 @@ public class Customer implements Serializable {
     public void setCmt(String cmt) {
         this.cmt = cmt;
     }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "phone_number='" + phone_number + '\'' +
+                ", name='" + name + '\'' +
+                ", address='" + address + '\'' +
+                ", cmt='" + cmt + '\'' +
+                '}';
+    }
 }

@@ -44,17 +44,17 @@ public class AdapterTranfer extends ArrayAdapter<Transfer> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        Transfer transfer  = getItem(position);
+        Transfer transfer = getItem(position);
 
         viewHolder.nameProduct.setText(transfer.getItem());
         viewHolder.date.setText(transfer.getDate_transfer().toString());
-        viewHolder.money.setText(transfer.getMoney());
+        viewHolder.money.setText(transfer.getMoney() + "");
 
         return convertView;
     }
 
-    class ViewHolder{
-        TextView nameProduct ;
+    class ViewHolder {
+        TextView nameProduct;
         TextView date;
         TextView money;
     }

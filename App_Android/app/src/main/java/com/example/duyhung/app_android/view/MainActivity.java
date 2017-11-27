@@ -12,13 +12,16 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.duyhung.app_android.R;
-import com.example.duyhung.app_android.conconler.ControlerCustomer;
+import com.example.duyhung.app_android.callback.CallBackGetListCustomer;
+import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
 import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.view.dialog.AddCustomer;
+import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static com.example.duyhung.app_android.Config.URL;
@@ -38,13 +41,27 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
 
-        List<Customer> customerList = new ArrayList<>();
-        ControlerCustomer controlerCustomer = new ControlerCustomer(this, URL);
-
-        customerList.addAll(controlerCustomer.getListCustomer(10,0));
-
+        final List<Customer> customerList = new ArrayList<>();
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
         listView.setAdapter(adapterCustomer);
+
+        Controler controler = new Controler(this, URL);
+        controler.getListCustomer(10, 0, new CallBackGetListCustomer() {
+            @Override
+            public void excute(String data) {
+                try {
+                    Gson gson = new Gson();
+                    Customer[] object = gson.fromJson(data, Customer[].class);
+                    List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
+                    customerList.addAll(myObjects);
+                    adapterCustomer.notifyDataSetChanged();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
+
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,9 +74,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Customer customer = (Customer) adapterView.getItemAtPosition(i);
-                Intent nextActivity = new Intent(MainActivity.this,ActivityTransfer.class);
+                Intent nextActivity = new Intent(MainActivity.this, ActivityTransfer.class);
 
-                nextActivity.putExtra("cutomer", (Serializable) customer);
+                nextActivity.putExtra("customer", (Serializable) customer);
                 startActivity(nextActivity);
             }
         });
@@ -88,18 +105,4 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    private List<Customer> getList() {
-        List<Customer> customerList = new ArrayList<>();
-        Customer customer = new Customer("01698499931", "nguyen the tai", "thanh hoa", "174511915");
-        Customer customer1 = new Customer("01698499931", "nguyen the tai", "thanh hoa", "174511915");
-        Customer customer2 = new Customer("01698499931", "nguyen the tai", "thanh hoa", "174511915");
-        Customer customer3 = new Customer("01698499931", "nguyen the tai", "thanh hoa", "174511915");
-        Customer customer4 = new Customer("01698499931", "nguyen the tai", "thanh hoa", "174511915");
-        customerList.add(customer);
-        customerList.add(customer1);
-        customerList.add(customer2);
-        customerList.add(customer3);
-        customerList.add(customer4);
-        return customerList;
-    }
 }

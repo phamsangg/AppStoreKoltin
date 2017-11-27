@@ -2,7 +2,6 @@ package com.example.duyhung.app_android.view;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,21 +14,27 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.example.duyhung.app_android.R;
-import com.example.duyhung.app_android.conconler.ControlerCustomer;
+import com.example.duyhung.app_android.callback.CallBackGetListCustomer;
+import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterTranfer;
+import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.module.Transfer;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
+import com.google.gson.Gson;
 
 import static com.example.duyhung.app_android.Config.URL;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ActivityTransfer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private List<Transfer> transferList;
+
     private AdapterTranfer adapterTranfer;
     private ListView listView;
+    private Customer customer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,9 +43,29 @@ public class ActivityTransfer extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        transferList = new ArrayList<>();
+        customer = (Customer) getIntent().getSerializableExtra("customer");
+
+        final List<Transfer> transferList = new ArrayList<>();
         ListView listView = (ListView) findViewById(R.id.list_transfer);
         adapterTranfer = new AdapterTranfer(this, R.layout.list_item_transfer, transferList);
+        listView.setAdapter(adapterTranfer);
+
+        Controler controler = new Controler(this, URL);
+        controler.getListTransfer(10, 0, customer.getPhone_number(), new CallBackGetListCustomer() {
+            @Override
+            public void excute(String data) {
+                try {
+                    Gson gson = new Gson();
+                    Transfer[] object = gson.fromJson(data, Transfer[].class);
+                    List<Transfer> myObjects = new ArrayList<>(Arrays.asList(object));
+                    transferList.addAll(myObjects);
+                    adapterTranfer.notifyDataSetChanged();
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
