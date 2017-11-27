@@ -1,5 +1,6 @@
 package com.example.duyhung.app_android.view;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
     private AdapterCustomer adapterCustomer;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +47,8 @@ public class MainActivity extends AppCompatActivity {
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
         listView.setAdapter(adapterCustomer);
 
+        showDialog();
+
         Controler controler = new Controler(this, URL);
         controler.getListCustomer(50, 0, new CallBackGetListCustomer() {
             @Override
@@ -55,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
                     List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
                     customerList.addAll(myObjects);
                     adapterCustomer.notifyDataSetChanged();
+                    hideDialog();
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -104,5 +109,23 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    private void showDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+        }
+        if (!progressDialog.isShowing()) {
+            progressDialog.setMessage("watting...");
+            progressDialog.show();
+        }
+
+    }
+
+    private void hideDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
+    }
+
 
 }

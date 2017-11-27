@@ -1,5 +1,6 @@
 package com.example.duyhung.app_android.view;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.view.View;
@@ -35,6 +36,7 @@ public class ActivityTransfer extends AppCompatActivity
     private AdapterTranfer adapterTranfer;
     private ListView listView;
     private Customer customer;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class ActivityTransfer extends AppCompatActivity
         ListView listView = (ListView) findViewById(R.id.list_transfer);
         adapterTranfer = new AdapterTranfer(this, R.layout.list_item_transfer, transferList);
         listView.setAdapter(adapterTranfer);
-
+        showDialog();
         Controler controler = new Controler(this, URL);
         controler.getListTransfer(10, 0, customer.getPhone_number(), new CallBackGetListCustomer() {
             @Override
@@ -60,6 +62,7 @@ public class ActivityTransfer extends AppCompatActivity
                     List<Transfer> myObjects = new ArrayList<>(Arrays.asList(object));
                     transferList.addAll(myObjects);
                     adapterTranfer.notifyDataSetChanged();
+                    hideDialog();
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -136,5 +139,22 @@ public class ActivityTransfer extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void showDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+        }
+        if (!progressDialog.isShowing()) {
+            progressDialog.setMessage("watting...");
+            progressDialog.show();
+        }
+
+    }
+
+    private void hideDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
     }
 }
