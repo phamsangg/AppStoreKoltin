@@ -1,12 +1,18 @@
 var express = require('express');
 var router = express();
+var dateFormat = require('dateformat');
 
 var Customer = require('./model/Customer');
 var Transfer = require('./model/Transfer');
 
 router.get('/insert/customer', function (req, res) {
 
-    Customer.addCustomer(req.body, function (err, count) {
+    var phone = req.query.phone_number;
+    var address = req.query.address;
+    var name = req.query.name;
+    var cmt = req.query.cmt;
+
+    Customer.addCustomer(phone, address, name, cmt, function (err, count) {
         if (err) {
             res.json(err);
         } else {
@@ -17,7 +23,12 @@ router.get('/insert/customer', function (req, res) {
 
 router.get('/insert/transfer', function (req, res) {
 
-    Transfer.addTranfer(req.boby, function (err, count) {
+    var date = dateFormat(req.query.date_tranfer, "yyyy-mm-dd HH:MM:ss");
+    var money = req.query.money;
+    var item = req.query.item;
+    var phone = req.query.customer_phone_number
+
+    Transfer.addTranfer(date, money, item, phone, function (err, count) {
         if (err) {
             res.json(err);
         } else {
@@ -29,8 +40,9 @@ router.get('/insert/transfer', function (req, res) {
 router.get('/get/customer', function (req, res) {
     var limited = parseInt(req.query.limit);
     var offseted = parseInt(req.query.offset);
+    var liked = req.query.like;
 
-    Customer.getCustomer(limited, offseted, function (err,row) {
+    Customer.getCustomer(limited, offseted, liked, function (err, row) {
         if (err) {
             res.status(404).send(err);
         } else {
