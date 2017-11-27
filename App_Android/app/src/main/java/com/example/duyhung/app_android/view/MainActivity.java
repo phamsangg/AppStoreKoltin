@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.example.duyhung.app_android.R;
+import com.example.duyhung.app_android.conconler.ControlerCustomer;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
 import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.view.dialog.AddCustomer;
@@ -19,6 +20,8 @@ import com.example.duyhung.app_android.view.dialog.AddCustomer;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.duyhung.app_android.Config.URL;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
         listView = (ListView) findViewById(R.id.lvCustomer);
 
         List<Customer> customerList = new ArrayList<>();
-        customerList.addAll(getList());
+        ControlerCustomer controlerCustomer = new ControlerCustomer(this, URL);
+
+        customerList.addAll(controlerCustomer.getListCustomer(10,0));
 
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
         listView.setAdapter(adapterCustomer);

@@ -15,10 +15,12 @@ import android.view.MenuItem;
 import android.widget.ListView;
 
 import com.example.duyhung.app_android.R;
+import com.example.duyhung.app_android.conconler.ControlerCustomer;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterTranfer;
 import com.example.duyhung.app_android.module.Transfer;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
 
+import static com.example.duyhung.app_android.Config.URL;
 import java.util.ArrayList;
 import java.util.List;
 
