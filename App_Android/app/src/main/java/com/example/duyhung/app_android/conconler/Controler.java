@@ -59,12 +59,12 @@ public class Controler {
 
     }
 
-    public void addTrasfer(CallBackAction callBackAction, Transfer transfer) {
+    public void addTrasfer(CallBackAction callBackAction, Transfer transfer,String phoneId) {
 
         try {
             String item = URLEncoder.encode(transfer.getItem(), "utf-8");
             String date_tranfer = URLEncoder.encode(transfer.getDate_transfer().toString(), "utf-8");
-            url += INSERT_TRANSFER + "?customer_phone_number=" + transfer.getCustomer_phone_number() + "&item=" + item + "&money=" + transfer.getMoney() + "&date_tranfer=" + date_tranfer;
+            url += INSERT_TRANSFER + "?customer_phone_number=" + phoneId + "&item=" + item + "&money=" + transfer.getMoney() + "&date_tranfer=" + date_tranfer;
             new AsyncSendData(activity, url, callBackAction).execute();
 
         } catch (UnsupportedEncodingException e) {

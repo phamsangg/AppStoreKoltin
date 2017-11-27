@@ -11,7 +11,6 @@ public class Transfer {
     private Date date_transfer;
     private int money;
     private String item;
-    private String customer_phone_number;
 
     public Transfer() {
     }
@@ -40,21 +39,4 @@ public class Transfer {
         this.item = item;
     }
 
-    public String getCustomer_phone_number() {
-        return customer_phone_number;
-    }
-
-    public void setCustomer_phone_number(String customer_phone_number) {
-        this.customer_phone_number = customer_phone_number;
-    }
-
-    @Override
-    public String toString() {
-        return "Transfer{" +
-                "date_transfer=" + date_transfer +
-                ", money=" + money +
-                ", item='" + item + '\'' +
-                ", customer_phone_number=" + customer_phone_number +
-                '}';
-    }
 }

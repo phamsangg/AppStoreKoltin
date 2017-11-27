@@ -48,34 +48,33 @@ public class AddTransfer extends DialogFragment {
                 .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        if(!item.getText().toString().trim().equals("")&& !sumMoney.getText().toString().trim().equals("")){
-                            Controler controler = new Controler(getActivity(),URL);
+                        if (!item.getText().toString().trim().equals("") && !sumMoney.getText().toString().trim().equals("")) {
+                            Controler controler = new Controler(getActivity(), URL);
                             controler.addTrasfer(new CallBackAction() {
                                 @Override
                                 public void result(Boolean result) {
 
                                 }
-                            },getData());
+                            }, getData(), phoneNumber);
                             dismiss();
                         }
                     }
                 })
                 .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                          dismiss();
+                        dismiss();
                     }
                 });
         return builder.create();
     }
 
-    private Transfer getData(){
+    private Transfer getData() {
         Transfer transfer = new Transfer();
 
         Date date = new Date();
         transfer.setItem(item.getText().toString().trim());
         transfer.setMoney(Integer.parseInt(sumMoney.getText().toString().trim()));
         transfer.setDate_transfer(date);
-        transfer.setCustomer_phone_number(phoneNumber);
         return transfer;
     }
 }
