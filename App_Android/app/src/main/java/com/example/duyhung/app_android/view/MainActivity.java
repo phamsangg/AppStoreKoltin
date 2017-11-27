@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapterCustomer);
 
         Controler controler = new Controler(this, URL);
-        controler.getListCustomer(10, 0, new CallBackGetListCustomer() {
+        controler.getListCustomer(50, 0, new CallBackGetListCustomer() {
             @Override
             public void excute(String data) {
                 try {

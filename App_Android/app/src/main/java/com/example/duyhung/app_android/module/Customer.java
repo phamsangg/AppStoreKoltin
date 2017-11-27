@@ -57,7 +57,7 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "Customer{" +
+        return "customer{" +
                 "phone_number='" + phone_number + '\'' +
                 ", name='" + name + '\'' +
                 ", address='" + address + '\'' +

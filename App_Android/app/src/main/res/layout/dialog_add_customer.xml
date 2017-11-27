@@ -8,71 +8,67 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="70dp"
+        android:background="#efefed"
         android:gravity="center"
         android:text="Create Customer"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="25dp"
         android:textStyle="bold" />
 
+        <EditText
+            android:id="@+id/phone_number"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#ffffff"
+            android:hint="Số Điện Thoại"
+            android:padding="10dp"
+            android:textSize="14dp" />
 
-    <EditText
-        android:id="@+id/SoDienThoai"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:background="#ffffff"
-        android:hint="Số Điện Thoại"
-        android:inputType="phone"
-        android:padding="10dp"
-        android:singleLine="false"
-        android:textSize="14dp" />
+        <EditText
+            android:id="@+id/name"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/phone_number"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#ffffff"
+            android:hint="Tên"
+            android:padding="10dp"
+            android:textSize="14dp" />
 
-    <EditText
-        android:id="@+id/Tên"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/SoDienThoai"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:background="#ffffff"
-        android:hint="Tên"
-        android:inputType="text"
-        android:padding="10dp"
-        android:textSize="14dp" />
+        <EditText
+            android:id="@+id/address"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/name"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#ffffff"
+            android:hint="Địa Chỉ"
+            android:padding="10dp"
+            android:textSize="14dp" />
 
-    <EditText
-        android:id="@+id/DiaChi"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/Ten"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:background="#ffffff"
-        android:hint="Địa Chỉ"
-        android:inputType="text"
-        android:padding="10dp"
-        android:textSize="14dp" />
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_below="@+id/DiaChi"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="15dp"
-        android:layout_marginLeft="15dp"
-        android:layout_marginRight="15dp"
-        android:background="#ffffff"
-        android:hint="CMND"
-        android:inputType="text"
-        android:padding="10dp"
-        android:textSize="14dp" />
+        <EditText
+            android:id="@+id/id_cmnd"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/DiaChi"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginRight="15dp"
+            android:background="#ffffff"
+            android:hint="CMND"
+            android:padding="10dp"
+            android:textSize="14dp" />
 
     <LinearLayout
         android:layout_width="match_parent"

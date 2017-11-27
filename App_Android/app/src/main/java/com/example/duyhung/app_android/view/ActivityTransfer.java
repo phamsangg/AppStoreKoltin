@@ -71,7 +71,7 @@ public class ActivityTransfer extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AddTransfer().show(getFragmentManager(), "");
+                new AddTransfer().newInstance(customer.getPhone_number()).show(getFragmentManager(), "");
             }
         });
 
