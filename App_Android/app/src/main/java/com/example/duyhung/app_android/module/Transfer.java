@@ -8,20 +8,20 @@ import java.util.Date;
 
 public class Transfer {
 
-    private Date date;
+    private Date date_transfer;
     private int money;
-    private String nameProduction;
-    private int phoneNumber;
+    private String item;
+    private int customer_phone_number;
 
     public Transfer() {
     }
 
-    public Date getDate() {
-        return date;
+    public Date getDate_transfer() {
+        return date_transfer;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDate_transfer(Date date_transfer) {
+        this.date_transfer = date_transfer;
     }
 
     public int getMoney() {
@@ -32,19 +32,19 @@ public class Transfer {
         this.money = money;
     }
 
-    public String getNameProduction() {
-        return nameProduction;
+    public String getItem() {
+        return item;
     }
 
-    public void setNameProduction(String nameProductino) {
-        this.nameProduction = nameProductino;
+    public void setItem(String item) {
+        this.item = item;
     }
 
-    public int getPhoneNumber() {
-        return phoneNumber;
+    public int getCustomer_phone_number() {
+        return customer_phone_number;
     }
 
-    public void setPhoneNumber(int phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setCustomer_phone_number(int customer_phone_number) {
+        this.customer_phone_number = customer_phone_number;
     }
 }

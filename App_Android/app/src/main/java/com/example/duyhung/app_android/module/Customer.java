@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 public class Customer implements Serializable {
 
-    private String phoneNumber;
+    private String phone_number;
     private String name;
     private String address;
     private String cmt;
@@ -17,18 +17,18 @@ public class Customer implements Serializable {
     }
 
     public Customer(String phoneNumber, String name, String address, String cmt) {
-        this.phoneNumber = phoneNumber;
+        this.phone_number = phoneNumber;
         this.name = name;
         this.address = address;
         this.cmt = cmt;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public String getPhone_number() {
+        return phone_number;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setPhone_number(String phone_number) {
+        this.phone_number = phone_number;
     }
 
     public String getName() {
