@@ -20,6 +20,8 @@ import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.module.Result;
 
+import java.util.Date;
+
 import static com.example.duyhung.app_android.Config.URL;
 
 
@@ -69,15 +71,15 @@ public class AddCustomer extends DialogFragment {
                     controler.addCustomer(new CallBackAction() {
                         @Override
                         public void excute(Result result) {
-                            if(result!=null){
-                                if(result.getStatus()==200){
-                                    Toast.makeText(activity,"create successfully",Toast.LENGTH_SHORT).show();
-                                }else{
-                                    Toast.makeText(activity,"create fail",Toast.LENGTH_SHORT).show();
+                            if (result != null) {
+                                if (result.getStatus() == 200) {
+                                    Toast.makeText(activity, "create successfully", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    Toast.makeText(activity, "create fail", Toast.LENGTH_SHORT).show();
                                 }
 
-                            }else{
-                                Toast.makeText(activity,"create fail",Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(activity, "create fail", Toast.LENGTH_SHORT).show();
                             }
                             hideDialog();
                         }
@@ -100,10 +102,12 @@ public class AddCustomer extends DialogFragment {
 
     private Customer create() {
         Customer customer = new Customer();
+        Date date = new Date();
         customer.setAddress(address.getText().toString().trim());
         customer.setCmt(cmt.getText().toString().trim());
         customer.setName(name.getText().toString().trim());
         customer.setPhone_number(phoneNumber.getText().toString().trim());
+        customer.setDate(date);
         return customer;
     }
 

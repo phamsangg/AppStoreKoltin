@@ -51,7 +51,8 @@ public class Controler {
             String address = URLEncoder.encode(customer.getAddress(), "utf-8");
             String phone = URLEncoder.encode(customer.getPhone_number(), "utf-8");
             String cmt = URLEncoder.encode(customer.getCmt().toString(), "utf-8");
-            url += INSERT_CUSTOMER + "?phone_number=" + phone + "&name=" + name + "&address=" + address + "&cmt=" + cmt;
+            String date = URLEncoder.encode(customer.getDate().toString(), "utf-8");
+            url += INSERT_CUSTOMER + "?phone_number=" + phone + "&name=" + name + "&address=" + address + "&cmt=" + cmt + "&date=" + date;
             new AsyncSendData(activity, url, callBackAction).execute();
 
         } catch (UnsupportedEncodingException e) {

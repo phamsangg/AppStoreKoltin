@@ -11,8 +11,9 @@ router.get('/insert/customer', function (req, res) {
     var address = req.query.address;
     var name = req.query.name;
     var cmt = req.query.cmt;
+    var date = dateFormat(req.query.date, "yyyy-mm-dd HH:MM:ss");
 
-    Customer.addCustomer(phone, address, name, cmt, function (err, count) {
+    Customer.addCustomer(phone, address, name, cmt, date,function (err, count) {
         if (err) {
             res.status(500).json(err);
         } else {
