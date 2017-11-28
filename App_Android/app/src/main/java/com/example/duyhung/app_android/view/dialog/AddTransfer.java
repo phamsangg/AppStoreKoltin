@@ -1,17 +1,21 @@
 package com.example.duyhung.app_android.view.dialog;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.conconler.Controler;
+import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.module.Transfer;
 
 import java.util.Date;
@@ -27,10 +31,14 @@ public class AddTransfer extends DialogFragment {
     String phoneNumber;
     private EditText item;
     private EditText sumMoney;
+    private ProgressDialog progressDialog;
+    Activity activity;
 
-    public AddTransfer newInstance(String phoneNumber) {
+
+    public AddTransfer newInstance(String phoneNumber, Activity activity) {
         AddTransfer frg = new AddTransfer();
         frg.phoneNumber = phoneNumber;
+        frg.activity = activity;
         return frg;
     }
 
@@ -49,14 +57,24 @@ public class AddTransfer extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         if (!item.getText().toString().trim().equals("") && !sumMoney.getText().toString().trim().equals("")) {
+                            dismiss();
                             Controler controler = new Controler(getActivity(), URL);
                             controler.addTrasfer(new CallBackAction() {
-                                @Override
-                                public void result(Boolean result) {
 
+                                @Override
+                                public void excute(Result result) {
+                                    if (result != null) {
+                                        if (result.getStatus() == 200) {
+                                            Toast.makeText(activity, "create successfully", Toast.LENGTH_SHORT).show();
+                                        } else {
+                                            Toast.makeText(activity, "create fail", Toast.LENGTH_SHORT).show();
+                                        }
+
+                                    } else {
+                                        Toast.makeText(activity, "create fail", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             }, getData(), phoneNumber);
-                            dismiss();
                         }
                     }
                 })
@@ -76,5 +94,22 @@ public class AddTransfer extends DialogFragment {
         transfer.setMoney(Integer.parseInt(sumMoney.getText().toString().trim()));
         transfer.setDate_transfer(date);
         return transfer;
+    }
+
+    private void showDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(activity);
+        }
+        if (!progressDialog.isShowing()) {
+            progressDialog.setMessage("creating...");
+            progressDialog.show();
+        }
+
+    }
+
+    private void hideDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
     }
 }

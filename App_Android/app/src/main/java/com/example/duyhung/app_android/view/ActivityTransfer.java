@@ -13,13 +13,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
-import com.example.duyhung.app_android.callback.CallBackGetListCustomer;
+import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterTranfer;
 import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.module.Transfer;
+import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
 import com.google.gson.Gson;
 
@@ -53,20 +55,32 @@ public class ActivityTransfer extends AppCompatActivity
         listView.setAdapter(adapterTranfer);
         showDialog();
         Controler controler = new Controler(this, URL);
-        controler.getListTransfer(10, 0, customer.getPhone_number(), new CallBackGetListCustomer() {
+        controler.getListTransfer(10, 0, customer.getPhone_number(), new CallBackAction() {
+
             @Override
-            public void excute(String data) {
-                try {
-                    Gson gson = new Gson();
-                    Transfer[] object = gson.fromJson(data, Transfer[].class);
-                    List<Transfer> myObjects = new ArrayList<>(Arrays.asList(object));
-                    transferList.addAll(myObjects);
-                    adapterTranfer.notifyDataSetChanged();
+            public void excute(Result result) {
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        try {
+                            Gson gson = new Gson();
+                            Transfer[] object = gson.fromJson(result.getResult(), Transfer[].class);
+                            List<Transfer> myObjects = new ArrayList<>(Arrays.asList(object));
+                            transferList.addAll(myObjects);
+                            adapterTranfer.notifyDataSetChanged();
+                            hideDialog();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    } else {
+                        hideDialog();
+                        Toast.makeText(ActivityTransfer.this, "Get data fail", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
                     hideDialog();
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Toast.makeText(ActivityTransfer.this, "Get data fail", Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
 
@@ -74,7 +88,7 @@ public class ActivityTransfer extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new AddTransfer().newInstance(customer.getPhone_number()).show(getFragmentManager(), "");
+                newTransfer();
             }
         });
 
@@ -86,6 +100,10 @@ public class ActivityTransfer extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+    }
+
+    private void newTransfer() {
+        new AddTransfer().newInstance(customer.getPhone_number(), this).show(getFragmentManager(), "");
     }
 
     @Override
@@ -146,7 +164,7 @@ public class ActivityTransfer extends AppCompatActivity
             progressDialog = new ProgressDialog(this);
         }
         if (!progressDialog.isShowing()) {
-            progressDialog.setMessage("watting...");
+            progressDialog.setMessage("Loadding...");
             progressDialog.show();
         }
 

@@ -5,7 +5,8 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.duyhung.app_android.callback.CallBackGetListCustomer;
+import com.example.duyhung.app_android.callback.CallBackAction;
+import com.example.duyhung.app_android.module.Result;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -33,25 +34,26 @@ public class AsyncGetData extends AsyncTask<String, String, Void> {
 
 
     Activity activity;
-
+    Result status;
     String url;
     InputStream inputStream = null;
-    String result = "";
-    CallBackGetListCustomer callBackGetListCustomer;
+    CallBackAction callBackAction;
 
-    public AsyncGetData(Activity activity, CallBackGetListCustomer callBackGetListCustomer, String url) {
+    public AsyncGetData(Activity activity, CallBackAction callBackAction, String url) {
         this.activity = activity;
         this.url = url;
-        this.callBackGetListCustomer = callBackGetListCustomer;
+        this.callBackAction = callBackAction;
     }
 
     @SuppressLint("LongLogTag")
     @Override
     protected Void doInBackground(String... strings) {
-
+        status = new Result();
+        String result = "";
+        int key = 0;
         try {
 
-            String postMessage="{}"; //HERE_YOUR_POST_STRING.
+            String postMessage = "{}"; //HERE_YOUR_POST_STRING.
             HttpParams httpParams = new BasicHttpParams();
             HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_MILLISEC);
             HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MILLISEC);
@@ -60,6 +62,7 @@ public class AsyncGetData extends AsyncTask<String, String, Void> {
 
             HttpGet httpGet = new HttpGet(url);
             HttpResponse httpResponse = httpClient.execute(httpGet);
+            key = httpResponse.getStatusLine().getStatusCode();
             HttpEntity httpEntity = httpResponse.getEntity();
 
             // Read content & Log
@@ -89,6 +92,8 @@ public class AsyncGetData extends AsyncTask<String, String, Void> {
 
             inputStream.close();
             result = sBuilder.toString();
+            status.setStatus(key);
+            status.setResult(result);
 
         } catch (Exception e) {
             Log.e("StringBuilding & BufferedReader", "Error converting result " + e.toString());
@@ -108,6 +113,6 @@ public class AsyncGetData extends AsyncTask<String, String, Void> {
     @Override
     protected void onPostExecute(Void aVoid) {
         super.onPostExecute(aVoid);
-        callBackGetListCustomer.excute(result);
+        callBackAction.excute(status);
     }
 }

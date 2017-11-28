@@ -1,9 +1,11 @@
 package com.example.duyhung.app_android.view;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -11,12 +13,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
-import com.example.duyhung.app_android.callback.CallBackGetListCustomer;
+import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
 import com.example.duyhung.app_android.module.Customer;
+import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.view.dialog.AddCustomer;
 import com.google.gson.Gson;
 
@@ -50,20 +54,36 @@ public class MainActivity extends AppCompatActivity {
         showDialog();
 
         Controler controler = new Controler(this, URL);
-        controler.getListCustomer(50, 0, new CallBackGetListCustomer() {
+        controler.getListCustomer(50, 0, new CallBackAction() {
+            @SuppressLint("ResourceType")
             @Override
-            public void excute(String data) {
-                try {
-                    Gson gson = new Gson();
-                    Customer[] object = gson.fromJson(data, Customer[].class);
-                    List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
-                    customerList.addAll(myObjects);
-                    adapterCustomer.notifyDataSetChanged();
+            public void excute(Result result) {
+                View view = findViewById(R.layout.activity_main);
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        try {
+                            Gson gson = new Gson();
+                            Customer[] object = gson.fromJson(result.getResult(), Customer[].class);
+                            List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
+                            customerList.addAll(myObjects);
+                            adapterCustomer.notifyDataSetChanged();
+                            hideDialog();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    } else {
+                        hideDialog();
+
+                        Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                } else {
                     hideDialog();
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
+
             }
         });
 
@@ -88,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addCustomer() {
-        new AddCustomer().show(getFragmentManager(), "");
+        new AddCustomer().newInstance(this).show(getFragmentManager(), "");
     }
 
     @Override
@@ -115,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             progressDialog = new ProgressDialog(this);
         }
         if (!progressDialog.isShowing()) {
-            progressDialog.setMessage("watting...");
+            progressDialog.setMessage("Loadding...");
             progressDialog.show();
         }
 
