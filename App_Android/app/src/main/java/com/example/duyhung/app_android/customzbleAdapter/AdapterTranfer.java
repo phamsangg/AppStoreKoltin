@@ -47,7 +47,7 @@ public class AdapterTranfer extends ArrayAdapter<Transfer> {
 
         Transfer transfer = getItem(position);
 
-        SimpleDateFormat ft= new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat ft= new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
 
         viewHolder.nameProduct.setText(transfer.getItem());
         viewHolder.date.setText(ft.format(transfer.getDate_transfer()).toString());

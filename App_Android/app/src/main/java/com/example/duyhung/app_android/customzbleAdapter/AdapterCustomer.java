@@ -37,7 +37,7 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
             LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
             convertView = inflater.inflate(resource, null);
             viewHolder.name = (TextView) convertView.findViewById(R.id.name_customer);
-            viewHolder.phone_number = (TextView) convertView.findViewById(R.id.phone_number);
+            viewHolder.phone_number = (TextView) convertView.findViewById(R.id.txtPhone_number);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
