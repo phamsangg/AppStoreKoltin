@@ -3,7 +3,7 @@ var customer = require('./Customer');
 
 var Transfer = {
     getTransfer: function (sdt,limit,offset, Callback) {
-        return db.query('select * from transfer where customer_phone_number = ? order by date_transfer desc limit ? offset ? order by date_transfer desc ', [sdt, limit, offset], Callback);
+        return db.query('select * from transfer where customer_phone_number = ? order by date_transfer desc limit ? offset ?', [sdt, limit, offset], Callback);
     },
 
     addTranfer: function (date,money,item,phone, Callback) {
