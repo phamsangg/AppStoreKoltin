@@ -133,7 +133,7 @@ public class ActivityTransfer extends AppCompatActivity
                 transferList.add(0, (Transfer) object);
 
                 numberMoney += ((Transfer) object).getMoney();
-                sumMoney.setText(String.valueOf(numberMoney));
+                sumMoney.setText(printMoney(String.valueOf(numberMoney)));
                 adapterTranfer.notifyDataSetChanged();
             }
         }).show(getFragmentManager(), "");
@@ -216,7 +216,8 @@ public class ActivityTransfer extends AppCompatActivity
         StringBuilder builder = new StringBuilder();
         int leng = moneys.length();
         int begin = leng % 3;
-        builder.append(moneys.substring(0, begin)).append(".");
+        if (begin != 0)
+            builder.append(moneys.substring(0, begin)).append(".");
         moneys = moneys.substring(begin);
         while (moneys.length() != 0) {
             builder.append(moneys.substring(0, 3));

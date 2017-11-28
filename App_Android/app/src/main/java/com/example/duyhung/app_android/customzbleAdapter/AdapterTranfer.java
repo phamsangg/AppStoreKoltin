@@ -60,7 +60,8 @@ public class AdapterTranfer extends ArrayAdapter<Transfer> {
         StringBuilder builder = new StringBuilder();
         int leng = moneys.length();
         int begin = leng % 3;
-        builder.append(moneys.substring(0, begin)).append(".");
+        if (begin != 0)
+            builder.append(moneys.substring(0, begin)).append(".");
         moneys = moneys.substring(begin);
         while (moneys.length() != 0) {
             builder.append(moneys.substring(0, 3));

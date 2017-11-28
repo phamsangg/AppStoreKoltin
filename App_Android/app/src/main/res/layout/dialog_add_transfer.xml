@@ -44,6 +44,7 @@
             android:layout_marginRight="15dp"
             android:background="#ffffff"
             android:hint="Tổng tiền"
+            android:inputType="textPhonetic|number|numberSigned"
             android:padding="10dp"
             android:textSize="14dp" />
 

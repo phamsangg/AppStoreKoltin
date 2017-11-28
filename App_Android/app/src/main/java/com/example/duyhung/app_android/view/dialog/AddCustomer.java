@@ -42,7 +42,7 @@ public class AddCustomer extends DialogFragment {
     private Button cancel;
     private CallBackObject callBackObject;
 
-    public AddCustomer newInstance(Activity activity,CallBackObject callBackObject) {
+    public AddCustomer newInstance(Activity activity, CallBackObject callBackObject) {
         AddCustomer addCustomer = new AddCustomer();
         addCustomer.activity = activity;
         addCustomer.callBackObject = callBackObject;
@@ -66,9 +66,9 @@ public class AddCustomer extends DialogFragment {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                dismiss();
                 if (!address.getText().toString().trim().equals("") && !cmt.getText().toString().trim().equals("")
                         && !name.getText().toString().trim().equals("") && !phoneNumber.getText().toString().trim().equals("")) {
+                    dismiss();
                     showDialog();
                     Controler controler = new Controler(getActivity(), URL);
                     controler.addCustomer(new CallBackAction() {
@@ -110,7 +110,10 @@ public class AddCustomer extends DialogFragment {
         customer.setAddress(address.getText().toString().trim());
         customer.setCmt(cmt.getText().toString().trim());
         customer.setName(name.getText().toString().trim());
-        customer.setPhone_number(phoneNumber.getText().toString().trim());
+        String phone = phoneNumber.getText().toString().trim();
+        phone = phone.replaceAll("\\s+","");
+        phone = phone.replaceAll("\\s?","");
+        customer.setPhone_number(phone);
         customer.setDate(date);
         return customer;
     }
@@ -131,4 +134,5 @@ public class AddCustomer extends DialogFragment {
             progressDialog.hide();
         }
     }
+
 }

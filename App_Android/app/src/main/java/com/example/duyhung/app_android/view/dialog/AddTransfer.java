@@ -7,6 +7,8 @@ import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -61,6 +63,7 @@ public class AddTransfer extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                         if (!item.getText().toString().trim().equals("") && !sumMoney.getText().toString().trim().equals("")) {
                             dismiss();
+                            showDialog();
                             Controler controler = new Controler(getActivity(), URL);
                             controler.addTrasfer(new CallBackAction() {
 
@@ -77,6 +80,7 @@ public class AddTransfer extends DialogFragment {
                                     } else {
                                         Toast.makeText(activity, "create fail", Toast.LENGTH_SHORT).show();
                                     }
+                                    hideDialog();
                                 }
                             }, getData(), phoneNumber);
                         }
@@ -87,6 +91,7 @@ public class AddTransfer extends DialogFragment {
                         dismiss();
                     }
                 });
+
         return builder.create();
     }
 
@@ -95,7 +100,10 @@ public class AddTransfer extends DialogFragment {
 
         Date date = new Date();
         transfer.setItem(item.getText().toString().trim());
-        transfer.setMoney(Integer.parseInt(sumMoney.getText().toString().trim()));
+        String money =sumMoney.getText().toString().trim();
+        money = money.replaceAll("\\s+","");
+        money = money.replaceAll("\\s?","");
+        transfer.setMoney(Integer.parseInt(money));
         transfer.setDate_transfer(date);
         return transfer;
     }

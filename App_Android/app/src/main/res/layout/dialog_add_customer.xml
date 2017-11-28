@@ -15,18 +15,19 @@
         android:textSize="25dp"
         android:textStyle="bold" />
 
-        <EditText
-            android:id="@+id/phone_number"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="15dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:background="#ffffff"
-            android:hint="Số Điện Thoại"
-            android:padding="10dp"
-            android:textSize="14dp" />
+    <EditText
+        android:id="@+id/phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:background="#ffffff"
+        android:hint="Số Điện Thoại"
+        android:inputType="textPhonetic|numberSigned"
+        android:padding="10dp"
+        android:textSize="14dp" />
 
         <EditText
             android:id="@+id/name"
