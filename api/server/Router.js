@@ -14,9 +14,9 @@ router.get('/insert/customer', function (req, res) {
 
     Customer.addCustomer(phone, address, name, cmt, function (err, count) {
         if (err) {
-            res.json(err);
+            res.status(500).json(err);
         } else {
-            res.json(req.body);
+            res.status(200).json(req.body);
         }
     });
 });
@@ -30,9 +30,9 @@ router.get('/insert/transfer', function (req, res) {
 
     Transfer.addTranfer(date, money, item, phone, function (err, count) {
         if (err) {
-            res.json(err);
+            res.status(500).json(err);
         } else {
-            res.json(req.body);
+            res.status(200).json(req.body);
         }
     });
 });
@@ -44,7 +44,7 @@ router.get('/get/customer', function (req, res) {
 
     Customer.getCustomer(limited, offseted, liked, function (err, row) {
         if (err) {
-            res.status(404).send(err);
+            res.status(500).send(err);
         } else {
             res.status(200).send(row);
         }
@@ -59,9 +59,9 @@ router.get('/get/transfer', function (req, res) {
 
     Transfer.getTransfer(sdt, limited, offseted, function (err, row) {
         if (err) {
-            res.json(err);
+            res.status(500).send(err);
         } else {
-            res.json(row);
+            res.status(200).send(row);
         }
     });
 });
