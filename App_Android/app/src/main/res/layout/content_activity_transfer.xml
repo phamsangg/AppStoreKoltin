@@ -49,6 +49,7 @@
                 android:background="@color/white"/>
 
             <TextView
+                android:id="@+id/phone_number"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -77,6 +78,7 @@
                 android:textSize="15dp" />
 
             <TextView
+                android:id="@+id/sum_money"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -105,6 +107,7 @@
                 android:textSize="15dp" />
 
             <TextView
+                android:id="@+id/address"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -133,6 +136,7 @@
                 android:textSize="15dp" />
 
             <TextView
+                android:id="@+id/date"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
@@ -161,6 +165,7 @@
                 android:textSize="15dp" />
 
             <TextView
+                android:id="@+id/cmt"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"

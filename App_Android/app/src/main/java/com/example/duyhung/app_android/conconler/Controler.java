@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER;
+import static com.example.duyhung.app_android.Config.GET_SUM;
 import static com.example.duyhung.app_android.Config.GET_TRANSFER;
 import static com.example.duyhung.app_android.Config.INSERT_CUSTOMER;
 import static com.example.duyhung.app_android.Config.INSERT_TRANSFER;
@@ -51,6 +52,12 @@ public class Controler {
 
     public void getListTransfer(int limit, int offset, String phoneNumber, CallBackAction callBackAction) {
         url += GET_TRANSFER + "?phone_number=" + phoneNumber + "&limit=" + limit + "&offset=" + offset;
+        new AsyncGetData(activity, callBackAction, url).execute();
+        return;
+    }
+
+    public void getSumMoney(String phoneNumber,CallBackAction callBackAction){
+        url += GET_SUM + "?phone_number=" + phoneNumber;
         new AsyncGetData(activity, callBackAction, url).execute();
         return;
     }

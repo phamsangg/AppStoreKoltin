@@ -13,7 +13,7 @@ router.get('/insert/customer', function (req, res) {
     var cmt = req.query.cmt;
     var date = dateFormat(req.query.date, "yyyy-mm-dd HH:MM:ss");
 
-    Customer.addCustomer(phone, address, name, cmt, date,function (err, count) {
+    Customer.addCustomer(phone, address, name, cmt, date, function (err, count) {
         if (err) {
             res.status(500).json(err);
         } else {
@@ -56,7 +56,7 @@ router.get('/get/transfer', function (req, res) {
 
     var limited = parseInt(req.query.limit);
     var offseted = parseInt(req.query.offset);
-    var sdt = parseInt(req.query.phone_number);
+    var sdt = req.query.phone_number;
 
     Transfer.getTransfer(sdt, limited, offseted, function (err, row) {
         if (err) {
@@ -66,5 +66,18 @@ router.get('/get/transfer', function (req, res) {
         }
     });
 });
+
+router.get('/get/transfer/sum', function (req, res) {
+    var phone = req.query.phone_number;
+
+    Transfer.getSumMoney(phone, function (err, row) {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(row);
+        }
+    });
+});
+
 
 module.exports = router;

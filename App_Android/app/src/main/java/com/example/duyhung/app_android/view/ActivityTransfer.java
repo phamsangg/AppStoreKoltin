@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
@@ -25,14 +26,18 @@ import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterTranfer;
 import com.example.duyhung.app_android.module.Customer;
+import com.example.duyhung.app_android.module.Sum;
 import com.example.duyhung.app_android.module.Transfer;
 import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
 import com.google.gson.Gson;
 
+import org.json.JSONObject;
+
 import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -47,6 +52,13 @@ public class ActivityTransfer extends AppCompatActivity
     private List<Transfer> transferList;
     View viewLoadingFooter;
     private int prevItem = 0;
+    private TextView name;
+    private TextView phoneNumber;
+    private TextView sumMoney;
+    private TextView address;
+    private TextView date;
+    private TextView cmt;
+    private long numberMoney = 0L;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +79,8 @@ public class ActivityTransfer extends AppCompatActivity
         listView.addFooterView(viewLoadingFooter);
 
         getData(LIMIT, prevItem);
+        init();
+        setText();
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -117,6 +131,9 @@ public class ActivityTransfer extends AppCompatActivity
             @Override
             public void returnObject(Object object) {
                 transferList.add(0, (Transfer) object);
+
+                numberMoney += ((Transfer) object).getMoney();
+                sumMoney.setText(String.valueOf(numberMoney));
                 adapterTranfer.notifyDataSetChanged();
             }
         }).show(getFragmentManager(), "");
@@ -175,6 +192,44 @@ public class ActivityTransfer extends AppCompatActivity
         return true;
     }
 
+    private void init() {
+        name = findViewById(R.id.txtSDT_layout_transfer);
+        phoneNumber = findViewById(R.id.phone_number);
+        sumMoney = findViewById(R.id.sum_money);
+        address = findViewById(R.id.address);
+        date = findViewById(R.id.date);
+        cmt = findViewById(R.id.cmt);
+    }
+
+    private void setText() {
+        SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
+        name.setText(customer.getName());
+        phoneNumber.setText(customer.getPhone_number());
+        sumMoney.setText("");
+        address.setText(customer.getAddress());
+        date.setText(ft.format(customer.getDate()).toString());
+        cmt.setText(customer.getCmt().toString());
+        getSumMoney();
+    }
+
+    private String printMoney(String moneys) {
+        StringBuilder builder = new StringBuilder();
+        int leng = moneys.length();
+        int begin = leng % 3;
+        builder.append(moneys.substring(0, begin)).append(".");
+        moneys = moneys.substring(begin);
+        while (moneys.length() != 0) {
+            builder.append(moneys.substring(0, 3));
+            if (moneys.length() != 3)
+                builder.append(".");
+            else
+                builder.append("đ");
+            moneys = moneys.substring(3);
+
+        }
+        return builder.toString();
+    }
+
     private void getData(final int limit, int offset) {
 
         if (viewLoadingFooter.getVisibility() == View.GONE)
@@ -212,6 +267,29 @@ public class ActivityTransfer extends AppCompatActivity
 
             }
         });
+    }
 
+    private void getSumMoney() {
+        Controler controler = new Controler(this, URL);
+        controler.getSumMoney(customer.getPhone_number(), new CallBackAction() {
+
+            @Override
+            public void excute(Result result) {
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        try {
+                            Gson gson = new Gson();
+                            Sum[] sums = gson.fromJson(result.getResult(), Sum[].class);
+                            List<Sum> myObjects = new ArrayList<>(Arrays.asList(sums));
+                            sumMoney.setText(printMoney(String.valueOf(myObjects.get(0).getSum())));
+                            numberMoney = myObjects.get(0).getSum();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        });
     }
 }

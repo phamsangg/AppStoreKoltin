@@ -47,14 +47,33 @@ public class AdapterTranfer extends ArrayAdapter<Transfer> {
 
         Transfer transfer = getItem(position);
 
-        SimpleDateFormat ft= new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
+        SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
 
         viewHolder.nameProduct.setText(transfer.getItem());
         viewHolder.date.setText(ft.format(transfer.getDate_transfer()).toString());
-        viewHolder.money.setText(transfer.getMoney() + "");
+        viewHolder.money.setText(printMoney(transfer.getMoney() + ""));
 
         return convertView;
     }
+
+    private String printMoney(String moneys) {
+        StringBuilder builder = new StringBuilder();
+        int leng = moneys.length();
+        int begin = leng % 3;
+        builder.append(moneys.substring(0, begin)).append(".");
+        moneys = moneys.substring(begin);
+        while (moneys.length() != 0) {
+            builder.append(moneys.substring(0, 3));
+            if (moneys.length() != 3)
+                builder.append(".");
+            else
+                builder.append("đ");
+            moneys = moneys.substring(3);
+
+        }
+        return builder.toString();
+    }
+
 
     class ViewHolder {
         TextView nameProduct;

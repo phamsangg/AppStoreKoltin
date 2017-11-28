@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.module.Customer;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -38,15 +39,21 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
             convertView = inflater.inflate(resource, null);
             viewHolder.name = (TextView) convertView.findViewById(R.id.name_customer);
             viewHolder.phone_number = (TextView) convertView.findViewById(R.id.txtPhone_number);
+            viewHolder.lastDateItem = (TextView) convertView.findViewById(R.id.txtDate_Final);
             convertView.setTag(viewHolder);
         } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
         Customer customer = getItem(position);
-
+        SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
+        if(customer.getName()!=null)
         viewHolder.name.setText(customer.getName());
+        if(customer.getPhone_number()!=null)
         viewHolder.phone_number.setText(customer.getPhone_number());
+        if(customer.getLateDateItem()!=null){
+            viewHolder.lastDateItem.setText(ft.format(customer.getLateDateItem()));
+        }
 
         return convertView;
     }
@@ -54,5 +61,6 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
     class ViewHolder {
         TextView name;
         TextView phone_number;
+        TextView lastDateItem;
     }
 }
