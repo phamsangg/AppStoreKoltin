@@ -8,10 +8,13 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AdapterView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -29,6 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
 
 public class MainActivity extends AppCompatActivity {
@@ -36,6 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private ListView listView;
     private AdapterCustomer adapterCustomer;
     private ProgressDialog progressDialog;
+    private List<Customer> customerList;
+    private EditText search;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,45 +53,15 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
 
-        final List<Customer> customerList = new ArrayList<>();
+        customerList = new ArrayList<>();
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
         listView.setAdapter(adapterCustomer);
 
+        search = findViewById(R.id.search);
+
         showDialog();
 
-        Controler controler = new Controler(this, URL);
-        controler.getListCustomer(50, 0, new CallBackAction() {
-            @SuppressLint("ResourceType")
-            @Override
-            public void excute(Result result) {
-                View view = findViewById(R.layout.activity_main);
-                if (result != null) {
-                    if (result.getStatus() == 200) {
-                        try {
-                            Gson gson = new Gson();
-                            Customer[] object = gson.fromJson(result.getResult(), Customer[].class);
-                            List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
-                            customerList.addAll(myObjects);
-                            adapterCustomer.notifyDataSetChanged();
-                            hideDialog();
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    } else {
-                        hideDialog();
-
-                        Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                } else {
-                    hideDialog();
-                    Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
-
-            }
-        });
+        getData(LIMIT, 0, search.getText().toString().trim());
 
 
         fab.setOnClickListener(new View.OnClickListener() {
@@ -103,6 +79,23 @@ public class MainActivity extends AppCompatActivity {
 
                 nextActivity.putExtra("customer", (Serializable) customer);
                 startActivity(nextActivity);
+            }
+        });
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                search(search.getText().toString().trim().toLowerCase());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
     }
@@ -147,5 +140,57 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void search(String keyWord) {
+        keyWord = '%' + keyWord + '%';
+        if (customerList.size() != 0)
+            customerList.clear();
+        getData(LIMIT, 0, keyWord);
+        adapterCustomer.notifyDataSetChanged();
+    }
 
+
+    private void getData(int limit, int offset, String like) {
+        Controler controler = new Controler(this, URL);
+        controler.getListCustomer(limit, offset, like, new CallBackAction() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void excute(Result result) {
+                View view = getWindow().getDecorView().findViewById(android.R.id.content);
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        try {
+                            Gson gson = new Gson();
+                            Customer[] object = gson.fromJson(result.getResult(), Customer[].class);
+                            List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
+                            customerList.addAll(myObjects);
+                            adapterCustomer.notifyDataSetChanged();
+                            hideDialog();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    } else {
+                        hideDialog();
+
+                        Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                } else {
+                    hideDialog();
+                    Snackbar.make(view, "No intenet connection", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(search.getText().toString().trim().equals("")){
+            super.onBackPressed();
+        }else{
+            search.setText("");
+        }
+    }
 }

@@ -31,9 +31,20 @@ public class Controler {
         this.url = url;
     }
 
-    public void getListCustomer(int limit, int offset, CallBackAction callBackAction) {
+    public void getListCustomer(int limit, int offset, String like, CallBackAction callBackAction) {
+
 
         url += GET_CUSTOMER + "?limit=" + limit + "&offset=" + offset;
+        if (like != null && !like.equals("")) {
+            try {
+                like = URLEncoder.encode(like, "utf-8");
+                url += "&like=" + like;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+
         new AsyncGetData(activity, callBackAction, url).execute();
         return;
     }

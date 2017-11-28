@@ -7,9 +7,9 @@ var Customer = {
 
     getCustomer: function (limit, offset, liked, Callback) {
         if (liked == null) {
-            return db.query('select * from customer limit ? offset ?', [limit, offset], Callback);
+            return db.query('select * from customer order by date_create desc limit ? offset ?', [limit, offset], Callback);
         } else {
-            return db.query('select * from customer where name like ? or phone_number like ? limit ? offset ?', [liked, liked, limit, offset], Callback);
+            return db.query('select phone_number,name,cmt,address,date_create from customer where name like ? or phone_number like ? order by date_create desc limit ? offset ?', [liked, liked, limit, offset], Callback);
         }
 
     }
