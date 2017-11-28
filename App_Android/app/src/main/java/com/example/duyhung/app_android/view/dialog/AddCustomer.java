@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -34,6 +35,8 @@ public class AddCustomer extends DialogFragment {
     private EditText cmt;
     private ProgressDialog progressDialog;
     private Activity activity;
+    private Button ok;
+    private Button cancel;
 
     public AddCustomer newInstance(Activity activity) {
         AddCustomer addCustomer = new AddCustomer();
@@ -51,42 +54,46 @@ public class AddCustomer extends DialogFragment {
         name = view.findViewById(R.id.name);
         address = view.findViewById(R.id.address);
         cmt = view.findViewById(R.id.id_cmnd);
+        ok = view.findViewById(R.id.btn_ok);
+        cancel = view.findViewById(R.id.btn_cancel);
+        builder.setView(view);
 
-        builder.setView(view)
-
-                .setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dismiss();
-                        if (!address.getText().toString().trim().equals("") && !cmt.getText().toString().trim().equals("")
-                                && !name.getText().toString().trim().equals("") && !phoneNumber.getText().toString().trim().equals("")) {
-                            showDialog();
-                            Controler controler = new Controler(getActivity(), URL);
-                            controler.addCustomer(new CallBackAction() {
-                                @Override
-                                public void excute(Result result) {
-                                    if(result!=null){
-                                        if(result.getStatus()==200){
-                                            Toast.makeText(activity,"create successfully",Toast.LENGTH_SHORT).show();
-                                        }else{
-                                            Toast.makeText(activity,"create fail",Toast.LENGTH_SHORT).show();
-                                        }
-
-                                    }else{
-                                        Toast.makeText(activity,"create fail",Toast.LENGTH_SHORT).show();
-                                    }
-                                    hideDialog();
+        ok.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+                if (!address.getText().toString().trim().equals("") && !cmt.getText().toString().trim().equals("")
+                        && !name.getText().toString().trim().equals("") && !phoneNumber.getText().toString().trim().equals("")) {
+                    showDialog();
+                    Controler controler = new Controler(getActivity(), URL);
+                    controler.addCustomer(new CallBackAction() {
+                        @Override
+                        public void excute(Result result) {
+                            if(result!=null){
+                                if(result.getStatus()==200){
+                                    Toast.makeText(activity,"create successfully",Toast.LENGTH_SHORT).show();
+                                }else{
+                                    Toast.makeText(activity,"create fail",Toast.LENGTH_SHORT).show();
                                 }
-                            }, create());
 
+                            }else{
+                                Toast.makeText(activity,"create fail",Toast.LENGTH_SHORT).show();
+                            }
+                            hideDialog();
                         }
-                    }
-                })
-                .setNegativeButton(R.string.btn_cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dismiss();
-                    }
-                });
+                    }, create());
+
+                }
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+
         return builder.create();
     }
 
