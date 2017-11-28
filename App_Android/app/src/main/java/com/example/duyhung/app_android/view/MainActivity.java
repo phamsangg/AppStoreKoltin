@@ -190,14 +190,10 @@ public class MainActivity extends AppCompatActivity {
                             e.printStackTrace();
                         }
                     } else {
-                        if (viewLoadingFooter.getVisibility() == View.VISIBLE)
-                            viewLoadingFooter.setVisibility(View.GONE);
                         Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
                                 .setAction("Action", null).show();
                     }
                 } else {
-                    if (viewLoadingFooter.getVisibility() == View.VISIBLE)
-                        viewLoadingFooter.setVisibility(View.GONE);
                     Snackbar.make(view, "No intenet connection", Snackbar.LENGTH_LONG)
                             .setAction("Action", null).show();
                 }

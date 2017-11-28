@@ -1,9 +1,11 @@
 package com.example.duyhung.app_android.view;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
 import com.google.gson.Gson;
 
+import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
 
 import java.util.ArrayList;
@@ -39,7 +43,9 @@ public class ActivityTransfer extends AppCompatActivity
     private AdapterTranfer adapterTranfer;
     private ListView listView;
     private Customer customer;
-    private ProgressDialog progressDialog;
+    private List<Transfer> transferList;
+    View viewLoadingFooter;
+    private int prevItem = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,43 +56,16 @@ public class ActivityTransfer extends AppCompatActivity
 
         customer = (Customer) getIntent().getSerializableExtra("customer");
 
-        final List<Transfer> transferList = new ArrayList<>();
-        ListView listView = (ListView) findViewById(R.id.list_transfer);
+        transferList = new ArrayList<>();
+        listView = (ListView) findViewById(R.id.list_transfer);
         adapterTranfer = new AdapterTranfer(this, R.layout.list_item_transfer, transferList);
         listView.setAdapter(adapterTranfer);
-        showDialog();
-        Controler controler = new Controler(this, URL);
-        controler.getListTransfer(10, 0, customer.getPhone_number(), new CallBackAction() {
 
-            @Override
-            public void excute(Result result) {
-                View view = getWindow().getDecorView().findViewById(android.R.id.content);
-                if (result != null) {
-                    if (result.getStatus() == 200) {
-                        try {
-                            Gson gson = new Gson();
-                            Transfer[] object = gson.fromJson(result.getResult(), Transfer[].class);
-                            List<Transfer> myObjects = new ArrayList<>(Arrays.asList(object));
-                            transferList.addAll(myObjects);
-                            adapterTranfer.notifyDataSetChanged();
-                            hideDialog();
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    } else {
-                        hideDialog();
-                        Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
-                                .setAction("Action", null).show();
-                    }
-                } else {
-                    hideDialog();
-                    Snackbar.make(view, "No intenet connection", Snackbar.LENGTH_LONG)
-                            .setAction("Action", null).show();
-                }
+        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
+        listView.addFooterView(viewLoadingFooter);
 
-            }
-        });
+        getData(LIMIT, prevItem);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -104,6 +83,32 @@ public class ActivityTransfer extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        listView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                switch (view.getId()) {
+                    case R.id.list_transfer:
+
+                        final int lastItem = firstVisibleItem + visibleItemCount;
+
+                        if (lastItem == totalItemCount) {
+
+                            if (firstVisibleItem != 0 && prevItem != lastItem) {
+                                getData(LIMIT, prevItem);
+                            }
+                            prevItem = lastItem;
+                        }
+                        break;
+                }
+            }
+        });
     }
 
     private void newTransfer() {
@@ -163,20 +168,43 @@ public class ActivityTransfer extends AppCompatActivity
         return true;
     }
 
-    private void showDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-        }
-        if (!progressDialog.isShowing()) {
-            progressDialog.setMessage("Loadding...");
-            progressDialog.show();
-        }
+    private void getData(final int limit, int offset) {
 
-    }
+        if (viewLoadingFooter.getVisibility() == View.GONE)
+            viewLoadingFooter.setVisibility(View.VISIBLE);
 
-    private void hideDialog() {
-        if (progressDialog != null && progressDialog.isShowing()) {
-            progressDialog.hide();
-        }
+        Controler controler = new Controler(this, URL);
+        controler.getListTransfer(limit, offset, customer.getPhone_number(), new CallBackAction() {
+
+            @Override
+            public void excute(Result result) {
+                View view = getWindow().getDecorView().findViewById(android.R.id.content);
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        try {
+                            Gson gson = new Gson();
+                            Transfer[] object = gson.fromJson(result.getResult(), Transfer[].class);
+                            List<Transfer> myObjects = new ArrayList<>(Arrays.asList(object));
+                            transferList.addAll(myObjects);
+                            if (myObjects.size() < limit)
+                                viewLoadingFooter.setVisibility(View.GONE);
+                            adapterTranfer.notifyDataSetChanged();
+
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    } else {
+                        Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
+                    }
+                } else {
+                    Snackbar.make(view, "No intenet connection", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+
+            }
+        });
+
     }
 }
