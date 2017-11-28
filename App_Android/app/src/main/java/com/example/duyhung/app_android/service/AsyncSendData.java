@@ -41,7 +41,6 @@ public class AsyncSendData extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
 
-        result = new Result();
         int key = 0;
         String value = "";
 
@@ -53,6 +52,7 @@ public class AsyncSendData extends AsyncTask<Void, Void, Void> {
             HttpClient httpclient = new DefaultHttpClient();
             HttpGet httpGet = new HttpGet(url);
             HttpResponse response = httpclient.execute(httpGet);
+            result = new Result();
             HttpEntity httpEntity = response.getEntity();
             key = response.getStatusLine().getStatusCode();
             value = EntityUtils.toString(httpEntity);

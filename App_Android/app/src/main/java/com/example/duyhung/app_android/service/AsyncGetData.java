@@ -17,6 +17,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.util.EntityUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -48,7 +49,6 @@ public class AsyncGetData extends AsyncTask<String, String, Void> {
     @SuppressLint("LongLogTag")
     @Override
     protected Void doInBackground(String... strings) {
-        status = new Result();
         String result = "";
         int key = 0;
         try {
@@ -62,6 +62,7 @@ public class AsyncGetData extends AsyncTask<String, String, Void> {
 
             HttpGet httpGet = new HttpGet(url);
             HttpResponse httpResponse = httpClient.execute(httpGet);
+            status = new Result();
             key = httpResponse.getStatusLine().getStatusCode();
             HttpEntity httpEntity = httpResponse.getEntity();
 

@@ -3,6 +3,7 @@ package com.example.duyhung.app_android.view;
 import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -59,6 +60,7 @@ public class ActivityTransfer extends AppCompatActivity
 
             @Override
             public void excute(Result result) {
+                View view = getWindow().getDecorView().findViewById(android.R.id.content);
                 if (result != null) {
                     if (result.getStatus() == 200) {
                         try {
@@ -74,11 +76,13 @@ public class ActivityTransfer extends AppCompatActivity
                         }
                     } else {
                         hideDialog();
-                        Toast.makeText(ActivityTransfer.this, "Get data fail", Toast.LENGTH_SHORT).show();
+                        Snackbar.make(view, "Get data fail", Snackbar.LENGTH_LONG)
+                                .setAction("Action", null).show();
                     }
                 } else {
                     hideDialog();
-                    Toast.makeText(ActivityTransfer.this, "Get data fail", Toast.LENGTH_SHORT).show();
+                    Snackbar.make(view, "No intenet connection", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
                 }
 
             }
