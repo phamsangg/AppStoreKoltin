@@ -23,6 +23,7 @@ import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
+import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
 import com.example.duyhung.app_android.module.Customer;
@@ -133,7 +134,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void addCustomer() {
-        new AddCustomer().newInstance(this).show(getFragmentManager(), "");
+        new AddCustomer().newInstance(this, new CallBackObject() {
+            @Override
+            public void returnObject(Object object) {
+                customerList.add(0, (Customer) object);
+                adapterCustomer.notifyDataSetChanged();
+            }
+        }).show(getFragmentManager(), "");
     }
 
     @Override

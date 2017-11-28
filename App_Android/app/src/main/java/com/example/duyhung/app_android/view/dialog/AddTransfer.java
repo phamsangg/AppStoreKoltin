@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
+import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.module.Transfer;
@@ -33,12 +34,14 @@ public class AddTransfer extends DialogFragment {
     private EditText sumMoney;
     private ProgressDialog progressDialog;
     Activity activity;
+    CallBackObject callBackObject;
 
 
-    public AddTransfer newInstance(String phoneNumber, Activity activity) {
+    public AddTransfer newInstance(String phoneNumber, Activity activity,CallBackObject callBackObject) {
         AddTransfer frg = new AddTransfer();
         frg.phoneNumber = phoneNumber;
         frg.activity = activity;
+        frg.callBackObject = callBackObject;
         return frg;
     }
 
@@ -65,6 +68,7 @@ public class AddTransfer extends DialogFragment {
                                 public void excute(Result result) {
                                     if (result != null) {
                                         if (result.getStatus() == 200) {
+                                            callBackObject.returnObject(getData());
                                             Toast.makeText(activity, "create successfully", Toast.LENGTH_SHORT).show();
                                         } else {
                                             Toast.makeText(activity, "create fail", Toast.LENGTH_SHORT).show();

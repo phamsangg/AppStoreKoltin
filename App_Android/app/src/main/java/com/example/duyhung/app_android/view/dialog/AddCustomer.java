@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
+import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.module.Result;
@@ -39,10 +40,12 @@ public class AddCustomer extends DialogFragment {
     private Activity activity;
     private Button ok;
     private Button cancel;
+    private CallBackObject callBackObject;
 
-    public AddCustomer newInstance(Activity activity) {
+    public AddCustomer newInstance(Activity activity,CallBackObject callBackObject) {
         AddCustomer addCustomer = new AddCustomer();
         addCustomer.activity = activity;
+        addCustomer.callBackObject = callBackObject;
         return addCustomer;
     }
 
@@ -73,6 +76,7 @@ public class AddCustomer extends DialogFragment {
                         public void excute(Result result) {
                             if (result != null) {
                                 if (result.getStatus() == 200) {
+                                    callBackObject.returnObject(create());
                                     Toast.makeText(activity, "create successfully", Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(activity, "create fail", Toast.LENGTH_SHORT).show();

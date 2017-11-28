@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
+import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterTranfer;
 import com.example.duyhung.app_android.module.Customer;
@@ -112,7 +113,13 @@ public class ActivityTransfer extends AppCompatActivity
     }
 
     private void newTransfer() {
-        new AddTransfer().newInstance(customer.getPhone_number(), this).show(getFragmentManager(), "");
+        new AddTransfer().newInstance(customer.getPhone_number(), this, new CallBackObject() {
+            @Override
+            public void returnObject(Object object) {
+                transferList.add(0, (Transfer) object);
+                adapterTranfer.notifyDataSetChanged();
+            }
+        }).show(getFragmentManager(), "");
     }
 
     @Override
