@@ -11,4 +11,5 @@
 
     <string name="recent_call">Recent calls</string>
     <string name="err_recent_call">Not have recent calls!</string>
+    <string name="list_customer">Danh sách khách hàng</string>
 </resources>

@@ -14,7 +14,15 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#164ce2"/>
+            android:background="@color/color_toolbar">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="@string/list_customer"
+                android:textSize="20dp"
+                android:gravity="center"
+                android:textColor="@color/white"/>
+        </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
 
