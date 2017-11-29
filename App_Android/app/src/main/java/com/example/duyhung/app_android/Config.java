@@ -14,6 +14,7 @@ public interface Config {
     String INSERT_TRANSFER = "/insert/transfer";
     String INSERT_CUSTOMER = "/insert/customer";
     String GET_SUM = "/get/transfer/sum";
+    String GET_CUSTOMER_PHONE = "/get/customer/phone";
 
     int TIMEOUT_MILLISEC = 30000;  // = 10 seconds
     int LIMIT = 20;

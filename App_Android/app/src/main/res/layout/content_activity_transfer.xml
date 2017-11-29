@@ -7,7 +7,7 @@
     android:background="@color/gray"
     android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:showIn="@layout/app_bar_activity_transfer">
+    tools:showIn="@layout/activity_transfer">
 
 
     <LinearLayout
@@ -17,18 +17,6 @@
         android:orientation="vertical"
         android:paddingRight="15dp"
         android:paddingBottom="6dp">
-
-        <TextView
-            android:id="@+id/txtSDT_layout_transfer"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:background="@color/white"
-            android:gravity="center"
-            android:text="Nguyen Duy Hung"
-            android:layout_marginTop="8dp"
-            android:layout_marginLeft="15dp"
-            android:textColor="@color/black"
-            android:textSize="20dp" />
 
         <LinearLayout
             android:layout_width="match_parent"
