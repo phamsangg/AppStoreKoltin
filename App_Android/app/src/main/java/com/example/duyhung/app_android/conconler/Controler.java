@@ -12,6 +12,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER;
+import static com.example.duyhung.app_android.Config.GET_CUSTOMER_PHONE;
 import static com.example.duyhung.app_android.Config.GET_SUM;
 import static com.example.duyhung.app_android.Config.GET_TRANSFER;
 import static com.example.duyhung.app_android.Config.INSERT_CUSTOMER;
@@ -56,7 +57,7 @@ public class Controler {
         return;
     }
 
-    public void getSumMoney(String phoneNumber,CallBackAction callBackAction){
+    public void getSumMoney(String phoneNumber, CallBackAction callBackAction) {
         url += GET_SUM + "?phone_number=" + phoneNumber;
         new AsyncGetData(activity, callBackAction, url).execute();
         return;
@@ -93,6 +94,18 @@ public class Controler {
             e.printStackTrace();
         }
 
+    }
+
+    public void getCutomer(CallBackAction callBackAction, String phoneID) {
+        try {
+
+            String phone = URLEncoder.encode(phoneID.toString(), "utf-8");
+            url += GET_CUSTOMER_PHONE + "?phone_number=" + phone;
+            new AsyncSendData(activity, url, callBackAction).execute();
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
 }

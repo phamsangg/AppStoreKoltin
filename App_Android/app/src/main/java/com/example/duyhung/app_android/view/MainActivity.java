@@ -2,13 +2,18 @@ package com.example.duyhung.app_android.view;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.telephony.PhoneStateListener;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -20,21 +25,29 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
+;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
+import com.example.duyhung.app_android.callback.CallBackEvent;
 import com.example.duyhung.app_android.callback.CallBackObject;
+import com.example.duyhung.app_android.callback.CallbackConfilm;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
+import com.example.duyhung.app_android.event.ServiceReceiver;
 import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.view.dialog.AddCustomer;
+import com.example.duyhung.app_android.view.dialog.ConfilmDialog;
+import com.example.duyhung.app_android.view.dialog.RecentCallDialog;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
@@ -47,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText search;
     View viewLoadingFooter;
     private int prevItem = 0;
+    Set<String> listPhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
+        listPhoneNumber = new HashSet<>();
 
         customerList = new ArrayList<>();
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
@@ -81,10 +96,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Customer customer = (Customer) adapterView.getItemAtPosition(i);
-                Intent nextActivity = new Intent(MainActivity.this, ActivityTransfer.class);
-
-                nextActivity.putExtra("customer", (Serializable) customer);
-                startActivity(nextActivity);
+                startTransferActivity(customer);
             }
         });
 
@@ -131,6 +143,10 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        Intent i = new Intent(this, ServiceReceiver.class);
+        this.startService(i);
+
     }
 
     private void addCustomer() {
@@ -155,7 +171,14 @@ public class MainActivity extends AppCompatActivity {
 
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_call) {
+
+            new RecentCallDialog().newInstance(this, listPhoneNumber, new CallBackEvent() {
+                @Override
+                public void getPhone(String phone) {
+                    getDataCustomer(phone);
+                }
+            }).show(getFragmentManager(), "");
             return true;
         }
 
@@ -209,6 +232,50 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void getDataCustomer(final String phone) {
+        Controler controler = new Controler(this, URL);
+        controler.getCutomer(new CallBackAction() {
+            @SuppressLint("ResourceType")
+            @Override
+            public void excute(Result result) {
+                View view = getWindow().getDecorView().findViewById(android.R.id.content);
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        try {
+                            Gson gson = new Gson();
+                            Customer[] object = gson.fromJson(result.getResult(), Customer[].class);
+                            List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
+                            if (myObjects.size() == 0) {
+                                new ConfilmDialog().newInstance("Số điện thoại chưa tồn tại. Bạn có muốn tạo mới không ?", new CallbackConfilm() {
+                                    @Override
+                                    public void confilm() {
+                                        new AddCustomer().newInstance(getParent(), new CallBackObject() {
+                                            @Override
+                                            public void returnObject(Object object) {
+                                                customerList.add(0, (Customer) object);
+                                                adapterCustomer.notifyDataSetChanged();
+                                            }
+                                        }, phone).show(getFragmentManager(), "");
+                                    }
+                                }).show(getFragmentManager(), "");
+                            } else {
+                                Customer customer = myObjects.get(0);
+                                startTransferActivity(customer);
+                            }
+
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Snackbar.make(view, "No intenet connection", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+        }, phone);
+    }
+
     @Override
     public void onBackPressed() {
         if (search.getText().toString().trim().equals("")) {
@@ -216,5 +283,36 @@ public class MainActivity extends AppCompatActivity {
         } else {
             search.setText("");
         }
+    }
+
+    public BroadcastReceiver receiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String str = intent.getStringExtra("data");
+            if (str != null && !str.equals("")) {
+                listPhoneNumber.add(str);
+            }
+        }
+    };
+
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+                new IntentFilter(ServiceReceiver.NOTIFICATION));
+    }
+
+    @Override
+    protected void onDestroy() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+        super.onDestroy();
+    }
+
+    private void startTransferActivity(Customer customer) {
+        Intent nextActivity = new Intent(MainActivity.this, ActivityTransfer.class);
+
+        nextActivity.putExtra("customer", (Serializable) customer);
+        startActivity(nextActivity);
     }
 }

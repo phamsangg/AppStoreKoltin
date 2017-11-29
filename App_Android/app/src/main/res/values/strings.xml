@@ -8,4 +8,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="title_activity_transfer">ActivityTransfer</string>
+
+    <string name="recent_call">Recent calls</string>
+    <string name="err_recent_call">Not have recent calls!</string>
 </resources>

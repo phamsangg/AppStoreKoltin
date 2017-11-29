@@ -6,7 +6,6 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,11 +40,20 @@ public class AddCustomer extends DialogFragment {
     private Button ok;
     private Button cancel;
     private CallBackObject callBackObject;
+    private String phone;
 
     public AddCustomer newInstance(Activity activity, CallBackObject callBackObject) {
         AddCustomer addCustomer = new AddCustomer();
         addCustomer.activity = activity;
         addCustomer.callBackObject = callBackObject;
+        return addCustomer;
+    }
+
+    public AddCustomer newInstance(Activity activity, CallBackObject callBackObject, String phone) {
+        AddCustomer addCustomer = new AddCustomer();
+        addCustomer.activity = activity;
+        addCustomer.callBackObject = callBackObject;
+        addCustomer.phone = phone;
         return addCustomer;
     }
 
@@ -61,6 +69,12 @@ public class AddCustomer extends DialogFragment {
         cmt = view.findViewById(R.id.id_cmnd);
         ok = view.findViewById(R.id.btn_ok);
         cancel = view.findViewById(R.id.btn_cancel);
+
+        if (phone != null) {
+            phoneNumber.setText(phone);
+            phoneNumber.setEnabled(false);
+        }
+
         builder.setView(view);
 
         ok.setOnClickListener(new View.OnClickListener() {
@@ -111,8 +125,8 @@ public class AddCustomer extends DialogFragment {
         customer.setCmt(cmt.getText().toString().trim());
         customer.setName(name.getText().toString().trim());
         String phone = phoneNumber.getText().toString().trim();
-        phone = phone.replaceAll("\\s+","");
-        phone = phone.replaceAll("\\s?","");
+        phone = phone.replaceAll("\\s+", "");
+        phone = phone.replaceAll("\\s?", "");
         customer.setPhone_number(phone);
         customer.setDate(date);
         return customer;

@@ -52,6 +52,19 @@ router.get('/get/customer', function (req, res) {
     });
 });
 
+router.get('/get/customer/phone', function (req, res) {
+    var phone = req.query.phone_number;
+
+    Customer.getonlyCustomer(phone, function (err, row) {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(row);
+        }
+    });
+});
+
+
 router.get('/get/transfer', function (req, res) {
 
     var limited = parseInt(req.query.limit);
