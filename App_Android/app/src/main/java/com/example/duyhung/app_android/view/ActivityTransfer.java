@@ -1,24 +1,18 @@
 package com.example.duyhung.app_android.view;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
@@ -26,21 +20,19 @@ import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterTranfer;
 import com.example.duyhung.app_android.module.Customer;
+import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.module.Sum;
 import com.example.duyhung.app_android.module.Transfer;
-import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
 import com.google.gson.Gson;
-
-import org.json.JSONObject;
-
-import static com.example.duyhung.app_android.Config.LIMIT;
-import static com.example.duyhung.app_android.Config.URL;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.example.duyhung.app_android.Config.LIMIT;
+import static com.example.duyhung.app_android.Config.URL;
 
 public class ActivityTransfer extends AppCompatActivity {
 
@@ -63,6 +55,7 @@ public class ActivityTransfer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_transfer);
+        overridePendingTransition(R.anim.slide_right_to_left_in, R.anim.slide_right_to_left_out);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -133,6 +126,7 @@ public class ActivityTransfer extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        overridePendingTransition(R.anim.slide_left_to_right_in, R.anim.slide_left_to_right_out);
     }
 
     @Override

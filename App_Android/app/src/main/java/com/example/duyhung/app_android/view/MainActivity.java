@@ -12,8 +12,6 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.telephony.PhoneStateListener;
-import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -24,7 +22,6 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 ;
 
 import com.example.duyhung.app_android.R;
@@ -311,7 +308,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void startTransferActivity(Customer customer) {
         Intent nextActivity = new Intent(MainActivity.this, ActivityTransfer.class);
-
         nextActivity.putExtra("customer", (Serializable) customer);
         startActivity(nextActivity);
     }
