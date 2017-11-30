@@ -63,6 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listViewCommingCall;
     private TextView noItem;
     private ImageView open;
+    private  FloatingActionButton fab;
 
     private AdapterCustomer adapterCustomer;
     private List<Customer> customerList;
@@ -80,33 +81,42 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        init();
+        displayItemNavigation();
+        registerEvent();
+        registerService();
+
+        getData(LIMIT, 0, search.getText().toString().trim());
+
+    }
+
+    private void init() {
+
+        fab= findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
         open = findViewById(R.id.open_navigation);
-
-        listPhoneContact = new ArrayList<>();
-
-        customerList = new ArrayList<>();
-        stringListPhoneContact = new ArrayList<>();
-        adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
-        listView.setAdapter(adapterCustomer);
-
-        adapterContact = new AdapterContact(this, R.layout.item_contact, listPhoneContact);
-
-        search = findViewById(R.id.search);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         listViewCommingCall = findViewById(R.id.list_comming_call);
         noItem = findViewById(R.id.txt_no_item);
+        search = findViewById(R.id.search);
+
+        listPhoneContact = new ArrayList<>();
+        customerList = new ArrayList<>();
+        stringListPhoneContact = new ArrayList<>();
+
+        adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
+        adapterContact = new AdapterContact(this, R.layout.item_contact, listPhoneContact);
 
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
         listView.addFooterView(viewLoadingFooter);
 
         listViewCommingCall.setAdapter(adapterContact);
+        listView.setAdapter(adapterCustomer);
 
-        getData(LIMIT, 0, search.getText().toString().trim());
+    }
 
-        displayItemNavigation();
+    private void registerEvent() {
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 addCustomer(null);
             }
         });
+
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -187,6 +198,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(Gravity.START);
+            }
+        });
+    }
+
+    private void registerService() {
+
         receiver = new BroadcastReceiver() {
 
             @Override
@@ -202,13 +223,6 @@ public class MainActivity extends AppCompatActivity {
                 displayItemNavigation();
             }
         };
-
-        open.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mDrawerLayout.openDrawer(Gravity.START);
-            }
-        });
 
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.READ_PHONE_STATE},

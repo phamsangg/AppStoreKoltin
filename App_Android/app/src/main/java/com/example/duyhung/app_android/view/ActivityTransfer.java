@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -44,13 +43,16 @@ public class ActivityTransfer extends AppCompatActivity {
     private List<Transfer> transferList;
     View viewLoadingFooter;
     private int prevItem = 0;
+    private long numberMoney = 0L;
+
     private TextView name;
     private TextView phoneNumber;
     private TextView sumMoney;
     private TextView address;
     private TextView date;
     private TextView cmt;
-    private long numberMoney = 0L;
+    private FloatingActionButton fab;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,28 +63,14 @@ public class ActivityTransfer extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         customer = (Customer) getIntent().getSerializableExtra("customer");
-
-        transferList = new ArrayList<>();
-        listView = (ListView) findViewById(R.id.list_transfer);
-        adapterTranfer = new AdapterTranfer(this, R.layout.list_item_transfer, transferList);
-        listView.setAdapter(adapterTranfer);
-
-        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
-        viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
-        listView.addFooterView(viewLoadingFooter);
-
-        getData(LIMIT, prevItem);
         init();
+        registerEvent();
         setText();
+        getData(LIMIT, prevItem);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                newTransfer();
-            }
-        });
+    }
 
+    private void registerEvent() {
 
         listView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
@@ -109,6 +97,14 @@ public class ActivityTransfer extends AppCompatActivity {
                 }
             }
         });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                newTransfer();
+            }
+        });
+
     }
 
     private void newTransfer() {
@@ -155,6 +151,17 @@ public class ActivityTransfer extends AppCompatActivity {
         address = findViewById(R.id.address);
         date = findViewById(R.id.date);
         cmt = findViewById(R.id.cmt);
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+
+        transferList = new ArrayList<>();
+        listView = (ListView) findViewById(R.id.list_transfer);
+        adapterTranfer = new AdapterTranfer(this, R.layout.list_item_transfer, transferList);
+        listView.setAdapter(adapterTranfer);
+
+        LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
+        viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
+        listView.addFooterView(viewLoadingFooter);
+
     }
 
     private void setText() {
@@ -169,9 +176,9 @@ public class ActivityTransfer extends AppCompatActivity {
     }
 
     private String printMoney(String moneys) {
-        if(moneys.equals("0")){
+        if (moneys.equals("0")) {
             return "0đ";
-        }else{
+        } else {
             StringBuilder builder = new StringBuilder();
             int leng = moneys.length();
             int begin = leng % 3;
