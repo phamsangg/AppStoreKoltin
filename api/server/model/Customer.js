@@ -13,7 +13,7 @@ var Customer = {
                 'order by date_create desc limit ? offset ?', [limit, offset], Callback);
         } else {
             return db.query('select customer.phone_number,customer.name,customer.cmt,customer.address,customer.date_create as date,' +
-                '(select date_transfer from transfer where customer_phone_number = customer.phone_number order by date_transfer desc limit 1) as lastdate' +
+                '(select date_transfer from transfer where customer_phone_number = customer.phone_number order by date_transfer desc limit 1) as lateDateItem' +
                 ' from customer where name like ? or phone_number like ? order by date_create desc limit ? offset ?', [liked, liked, limit, offset], Callback);
         }
 
