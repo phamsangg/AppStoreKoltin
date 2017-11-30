@@ -321,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
                                 customer.setCmt(myObjects.get(0).getCmt());
                                 customer.setLateDateItem(myObjects.get(0).getLateDateItem());
                             }
-                            listPhoneContact.add(0,customer);
+                            listPhoneContact.add(0, customer);
                             adapterContact.notifyDataSetChanged();
 
                         } catch (Exception e) {
@@ -342,7 +342,13 @@ public class MainActivity extends AppCompatActivity {
         if (mDrawerLayout.isDrawerOpen(GravityCompat.START))
             mDrawerLayout.closeDrawers();
         else if (search.getText().toString().trim().equals("")) {
-            super.onBackPressed();
+            new ConfilmDialog().newInstance("Bạn có muốn thoát không", new CallbackConfilm() {
+                @Override
+                public void confilm() {
+                    finish();
+                }
+            }).show(getFragmentManager(), "tag");
+
         } else {
             search.setText("");
         }
