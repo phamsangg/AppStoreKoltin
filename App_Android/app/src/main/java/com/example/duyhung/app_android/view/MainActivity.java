@@ -1,5 +1,6 @@
 package com.example.duyhung.app_android.view;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
@@ -7,14 +8,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -62,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
     private ListView listViewCommingCall;
     private List<String> listPhoneNumber;
 
+    private BroadcastReceiver receiver;
+    private int MY_PERMISSIONS_REQUEST_SMS_RECEIVE = 10;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addCustomer();
+                addCustomer(null);
             }
         });
 
@@ -159,19 +166,50 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Intent i = new Intent(this, ServiceReceiver.class);
-        this.startService(i);
+        receiver = new BroadcastReceiver() {
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String str = intent.getStringExtra("data");
+                if (str != null && !str.equals("")) {
+                    if (checkListPhone(str)) {
+                        listPhoneNumber.add(0, str);
+                        ((BaseAdapter) listViewCommingCall.getAdapter()).notifyDataSetChanged();
+                    }
+
+                }
+            }
+        };
+
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_PHONE_STATE},
+                MY_PERMISSIONS_REQUEST_SMS_RECEIVE);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
+                new IntentFilter(ServiceReceiver.NOTIFICATION));
 
     }
 
-    private void addCustomer() {
-        new AddCustomer().newInstance(this, new CallBackObject() {
+    private void addCustomer(String phone) {
+        AddCustomer addCustomer = null;
+        if(phone==null)
+            addCustomer= new AddCustomer().newInstance(this, new CallBackObject() {
             @Override
             public void returnObject(Object object) {
                 customerList.add(0, (Customer) object);
                 adapterCustomer.notifyDataSetChanged();
             }
-        }).show(getFragmentManager(), "");
+        });
+        else
+            addCustomer= new AddCustomer().newInstance(this, new CallBackObject() {
+                @Override
+                public void returnObject(Object object) {
+                    customerList.add(0, (Customer) object);
+                    adapterCustomer.notifyDataSetChanged();
+                }
+            },phone);
+        addCustomer.show(getFragmentManager(),"");
+
     }
 
     private void search(String keyWord) {
@@ -238,13 +276,7 @@ public class MainActivity extends AppCompatActivity {
                                 new ConfilmDialog().newInstance("Số điện thoại chưa tồn tại. Bạn có muốn tạo mới không ?", new CallbackConfilm() {
                                     @Override
                                     public void confilm() {
-                                        new AddCustomer().newInstance(getParent(), new CallBackObject() {
-                                            @Override
-                                            public void returnObject(Object object) {
-                                                customerList.add(0, (Customer) object);
-                                                adapterCustomer.notifyDataSetChanged();
-                                            }
-                                        }, phone).show(getFragmentManager(), "");
+                                       addCustomer(phone);
                                     }
                                 }).show(getFragmentManager(), "");
                             } else {
@@ -274,21 +306,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public BroadcastReceiver receiver = new BroadcastReceiver() {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String str = intent.getStringExtra("data");
-            if (str != null && !str.equals("")) {
-                if (checkListPhone(str)) {
-                    listPhoneNumber.add(0, str);
-                    ((BaseAdapter) listViewCommingCall.getAdapter()).notifyDataSetChanged();
-                }
-
-            }
-        }
-    };
-
     private boolean checkListPhone(String string) {
         for (String s : listPhoneNumber) {
             if (string.equals(s)) {
@@ -315,5 +332,14 @@ public class MainActivity extends AppCompatActivity {
         Intent nextActivity = new Intent(MainActivity.this, ActivityTransfer.class);
         nextActivity.putExtra("customer", (Serializable) customer);
         startActivity(nextActivity);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == MY_PERMISSIONS_REQUEST_SMS_RECEIVE) {
+            // YES!!
+            Log.i("TAG", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> YES");
+        }
     }
 }

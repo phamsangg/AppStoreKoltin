@@ -28,9 +28,10 @@
             android:label="@string/title_activity_transfer"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <receiver android:name=".event.ServiceReceiver" >
+        <receiver android:name=".event.ServiceReceiver" android:enabled="true" >
             <intent-filter>
                 <action android:name="android.intent.action.PHONE_STATE" />
+
             </intent-filter>
         </receiver>
 
