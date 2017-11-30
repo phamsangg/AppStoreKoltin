@@ -8,33 +8,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.callback.CallbackConfilm;
 import com.example.duyhung.app_android.conconler.Controler;
+import com.example.duyhung.app_android.customzbleAdapter.AdapterContact;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
 import com.example.duyhung.app_android.event.ServiceReceiver;
 import com.example.duyhung.app_android.module.Customer;
@@ -56,15 +56,20 @@ import static com.example.duyhung.app_android.Config.URL;
 public class MainActivity extends AppCompatActivity {
 
     private ListView listView;
-    private AdapterCustomer adapterCustomer;
-    private List<Customer> customerList;
     private EditText search;
     View viewLoadingFooter;
     private int prevItem = 0;
 
     private DrawerLayout mDrawerLayout;
     private ListView listViewCommingCall;
-    private List<String> listPhoneNumber;
+    private TextView noItem;
+    private ImageView open;
+
+    private AdapterCustomer adapterCustomer;
+    private List<Customer> customerList;
+    private List<Customer> listPhoneContact;
+    private AdapterContact adapterContact;
+    private List<String> stringListPhoneContact;
 
     private BroadcastReceiver receiver;
     private int MY_PERMISSIONS_REQUEST_SMS_RECEIVE = 10;
@@ -78,25 +83,31 @@ public class MainActivity extends AppCompatActivity {
 
         FloatingActionButton fab = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
+        open = findViewById(R.id.open_navigation);
 
-        listPhoneNumber = new ArrayList<>();
+        listPhoneContact = new ArrayList<>();
 
         customerList = new ArrayList<>();
+        stringListPhoneContact = new ArrayList<>();
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
         listView.setAdapter(adapterCustomer);
+
+        adapterContact = new AdapterContact(this, R.layout.item_contact, listPhoneContact);
 
         search = findViewById(R.id.search);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         listViewCommingCall = findViewById(R.id.list_comming_call);
+        noItem = findViewById(R.id.txt_no_item);
 
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
         listView.addFooterView(viewLoadingFooter);
 
-        listViewCommingCall.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listPhoneNumber));
+        listViewCommingCall.setAdapter(adapterContact);
 
         getData(LIMIT, 0, search.getText().toString().trim());
 
+        displayItemNavigation();
 
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -160,9 +171,20 @@ public class MainActivity extends AppCompatActivity {
         listViewCommingCall.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                String string = String.valueOf(adapterView.getItemAtPosition(i));
-                getDataCustomer(string);
+
+                final Customer customer = (Customer) adapterView.getItemAtPosition(i);
                 mDrawerLayout.closeDrawers();
+                if (customer.getName() != null && customer.getDate() != null && customer.getDate() != null && customer.getCmt() != null
+                        && customer.getAddress() != null) {
+                    startTransferActivity(customer);
+                } else {
+                    new ConfilmDialog().newInstance("Số điện thoại chưa tồn tại. Bạn có muốn tạo mới không ?", new CallbackConfilm() {
+                        @Override
+                        public void confilm() {
+                            addCustomer(customer.getPhone_number());
+                        }
+                    }).show(getFragmentManager(), "");
+                }
             }
         });
 
@@ -170,16 +192,25 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onReceive(Context context, Intent intent) {
-                String str = intent.getStringExtra("data");
+                String str = replaceCharact(intent.getStringExtra("data"));
                 if (str != null && !str.equals("")) {
                     if (checkListPhone(str)) {
-                        listPhoneNumber.add(0, str);
-                        ((BaseAdapter) listViewCommingCall.getAdapter()).notifyDataSetChanged();
+                        getDataCustomer(str);
+                        stringListPhoneContact.add(str);
+                        Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
                     }
 
                 }
+                displayItemNavigation();
             }
         };
+
+        open.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mDrawerLayout.openDrawer(Gravity.START);
+            }
+        });
 
         ActivityCompat.requestPermissions(this,
                 new String[]{Manifest.permission.READ_PHONE_STATE},
@@ -190,25 +221,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void displayItemNavigation() {
+
+        if (listPhoneContact.size() == 0) {
+            noItem.setVisibility(View.VISIBLE);
+            listViewCommingCall.setVisibility(View.GONE);
+        } else {
+            noItem.setVisibility(View.GONE);
+            listViewCommingCall.setVisibility(View.VISIBLE);
+        }
+    }
+
     private void addCustomer(String phone) {
         AddCustomer addCustomer = null;
-        if(phone==null)
-            addCustomer= new AddCustomer().newInstance(this, new CallBackObject() {
-            @Override
-            public void returnObject(Object object) {
-                customerList.add(0, (Customer) object);
-                adapterCustomer.notifyDataSetChanged();
-            }
-        });
-        else
-            addCustomer= new AddCustomer().newInstance(this, new CallBackObject() {
+        if (phone == null)
+            addCustomer = new AddCustomer().newInstance(this, new CallBackObject() {
                 @Override
                 public void returnObject(Object object) {
                     customerList.add(0, (Customer) object);
                     adapterCustomer.notifyDataSetChanged();
                 }
-            },phone);
-        addCustomer.show(getFragmentManager(),"");
+            });
+        else
+            addCustomer = new AddCustomer().newInstance(this, new CallBackObject() {
+                @Override
+                public void returnObject(Object object) {
+                    customerList.add(0, (Customer) object);
+                    adapterCustomer.notifyDataSetChanged();
+                }
+            }, phone);
+        addCustomer.show(getFragmentManager(), "");
 
     }
 
@@ -272,17 +314,17 @@ public class MainActivity extends AppCompatActivity {
                             Gson gson = new Gson();
                             Customer[] object = gson.fromJson(result.getResult(), Customer[].class);
                             List<Customer> myObjects = new ArrayList<>(Arrays.asList(object));
-                            if (myObjects.size() == 0) {
-                                new ConfilmDialog().newInstance("Số điện thoại chưa tồn tại. Bạn có muốn tạo mới không ?", new CallbackConfilm() {
-                                    @Override
-                                    public void confilm() {
-                                       addCustomer(phone);
-                                    }
-                                }).show(getFragmentManager(), "");
-                            } else {
-                                Customer customer = myObjects.get(0);
-                                startTransferActivity(customer);
+                            Customer customer = new Customer();
+                            customer.setPhone_number(phone);
+                            if (myObjects.size() != 0) {
+                                customer.setDate(myObjects.get(0).getDate());
+                                customer.setName(myObjects.get(0).getName());
+                                customer.setAddress(myObjects.get(0).getAddress());
+                                customer.setCmt(myObjects.get(0).getCmt());
+                                customer.setLateDateItem(myObjects.get(0).getLateDateItem());
                             }
+                            listPhoneContact.add(0,customer);
+                            adapterContact.notifyDataSetChanged();
 
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
@@ -299,7 +341,9 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (search.getText().toString().trim().equals("")) {
+        if (mDrawerLayout.isDrawerOpen(GravityCompat.START))
+            mDrawerLayout.closeDrawers();
+        else if (search.getText().toString().trim().equals("")) {
             super.onBackPressed();
         } else {
             search.setText("");
@@ -307,12 +351,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkListPhone(String string) {
-        for (String s : listPhoneNumber) {
-            if (string.equals(s)) {
+        for (String phone : stringListPhoneContact) {
+            if (string.equals(phone)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private String replaceCharact(String txt) {
+        txt = txt.replace(" ", "");
+        txt = txt.replace("+84", "0");
+        return txt;
     }
 
     @Override
@@ -334,12 +384,4 @@ public class MainActivity extends AppCompatActivity {
         startActivity(nextActivity);
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_PERMISSIONS_REQUEST_SMS_RECEIVE) {
-            // YES!!
-            Log.i("TAG", "MY_PERMISSIONS_REQUEST_SMS_RECEIVE --> YES");
-        }
-    }
 }
