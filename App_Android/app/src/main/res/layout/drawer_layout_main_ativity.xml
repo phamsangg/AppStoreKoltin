@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <FrameLayout
+            android:id="@+id/mFragmentContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <include layout="@layout/activity_main" />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/whatYouWantInLeftDrawer"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/white">
+
+        <RelativeLayout
+            android:id="@+id/rlBanner"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@color/background_title_drawer"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:paddingTop="120dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/ivCoverPic"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:foregroundGravity="center"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_call_black_24dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="60dp"
+                    android:gravity="center"
+                    android:text="@string/recent_call"
+                    android:textColor="@color/black"
+                    android:textSize="20dp" />
+
+
+                <LinearLayout
+                    android:id="@+id/llCoverTint"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:orientation="vertical"></LinearLayout>
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+        <ListView
+            android:padding="10dp"
+            android:id="@+id/list_comming_call"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_below="@id/rlBanner"
+            android:layout_gravity="start"
+            android:background="@color/grey"
+            android:choiceMode="singleChoice"></ListView>
+
+    </RelativeLayout>
+</android.support.v4.widget.DrawerLayout>

@@ -10,23 +10,24 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
-import com.example.duyhung.app_android.callback.CallBackEvent;
 import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.callback.CallbackConfilm;
 import com.example.duyhung.app_android.conconler.Controler;
@@ -36,18 +37,17 @@ import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.module.Result;
 import com.example.duyhung.app_android.view.dialog.AddCustomer;
 import com.example.duyhung.app_android.view.dialog.ConfilmDialog;
-import com.example.duyhung.app_android.view.dialog.RecentCallDialog;
 import com.google.gson.Gson;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
+
+;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,27 +57,36 @@ public class MainActivity extends AppCompatActivity {
     private EditText search;
     View viewLoadingFooter;
     private int prevItem = 0;
-    Set<String> listPhoneNumber;
+
+    private DrawerLayout mDrawerLayout;
+    private ListView listViewCommingCall;
+    private List<String> listPhoneNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.drawer_layout_main_ativity);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
-        listPhoneNumber = new HashSet<>();
+
+        listPhoneNumber = new ArrayList<>();
 
         customerList = new ArrayList<>();
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
         listView.setAdapter(adapterCustomer);
 
         search = findViewById(R.id.search);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        listViewCommingCall = findViewById(R.id.list_comming_call);
+
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
         listView.addFooterView(viewLoadingFooter);
+
+        listViewCommingCall.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listPhoneNumber));
 
         getData(LIMIT, 0, search.getText().toString().trim());
 
@@ -141,6 +150,15 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        listViewCommingCall.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String string = String.valueOf(adapterView.getItemAtPosition(i));
+                getDataCustomer(string);
+                mDrawerLayout.closeDrawers();
+            }
+        });
+
         Intent i = new Intent(this, ServiceReceiver.class);
         this.startService(i);
 
@@ -154,32 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 adapterCustomer.notifyDataSetChanged();
             }
         }).show(getFragmentManager(), "");
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_call) {
-
-            new RecentCallDialog().newInstance(this, listPhoneNumber, new CallBackEvent() {
-                @Override
-                public void getPhone(String phone) {
-                    getDataCustomer(phone);
-                }
-            }).show(getFragmentManager(), "");
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     private void search(String keyWord) {
@@ -288,10 +280,23 @@ public class MainActivity extends AppCompatActivity {
         public void onReceive(Context context, Intent intent) {
             String str = intent.getStringExtra("data");
             if (str != null && !str.equals("")) {
-                listPhoneNumber.add(str);
+                if (checkListPhone(str)) {
+                    listPhoneNumber.add(0, str);
+                    ((BaseAdapter) listViewCommingCall.getAdapter()).notifyDataSetChanged();
+                }
+
             }
         }
     };
+
+    private boolean checkListPhone(String string) {
+        for (String s : listPhoneNumber) {
+            if (string.equals(s)) {
+                return false;
+            }
+        }
+        return true;
+    }
 
     @Override
     protected void onPostResume() {

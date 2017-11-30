@@ -9,4 +9,5 @@
     <color name="gray">#FFE7E5E5</color>
     <color name="color_toolbar">#4d4d4d</color>
     <color name="grey">#f2f2f2</color>
+    <color name="background_title_drawer">#40bf80</color>
 </resources>
