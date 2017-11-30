@@ -53,6 +53,8 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
         viewHolder.phone_number.setText(customer.getPhone_number());
         if(customer.getLateDateItem()!=null){
             viewHolder.lastDateItem.setText(ft.format(customer.getLateDateItem()));
+        }else{
+            viewHolder.lastDateItem.setText(getContext().getResources().getText(R.string.not_transfer));
         }
 
         return convertView;
