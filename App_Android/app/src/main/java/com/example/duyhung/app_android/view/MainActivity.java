@@ -27,7 +27,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
@@ -197,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
                     if (checkListPhone(str)) {
                         getDataCustomer(str);
                         stringListPhoneContact.add(str);
-                        Toast.makeText(getBaseContext(), str, Toast.LENGTH_SHORT).show();
                     }
 
                 }

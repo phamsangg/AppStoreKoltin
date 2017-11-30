@@ -11,10 +11,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import com.example.duyhung.app_android.R;
-import com.example.duyhung.app_android.module.Contact;
 import com.example.duyhung.app_android.module.Customer;
 
-import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
@@ -53,6 +51,9 @@ public class AdapterContact extends ArrayAdapter<Customer> {
             viewHolder.name.setText(getContext().getResources().getText(R.string.not_name));
         if (customer.getPhone_number() != null)
             viewHolder.phone_number.setText(customer.getPhone_number());
+
+        viewHolder.phone_number.setTextColor(getContext().getColor(R.color.white));
+        viewHolder.name.setTextColor(getContext().getColor(R.color.white));
 
         return convertView;
     }
