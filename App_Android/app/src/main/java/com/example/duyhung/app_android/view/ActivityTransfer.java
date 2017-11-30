@@ -168,22 +168,26 @@ public class ActivityTransfer extends AppCompatActivity {
     }
 
     private String printMoney(String moneys) {
-        StringBuilder builder = new StringBuilder();
-        int leng = moneys.length();
-        int begin = leng % 3;
-        if (begin != 0)
-            builder.append(moneys.substring(0, begin)).append(".");
-        moneys = moneys.substring(begin);
-        while (moneys.length() != 0) {
-            builder.append(moneys.substring(0, 3));
-            if (moneys.length() != 3)
-                builder.append(".");
-            else
-                builder.append("đ");
-            moneys = moneys.substring(3);
+        if(moneys.equals("0")){
+            return "0đ";
+        }else{
+            StringBuilder builder = new StringBuilder();
+            int leng = moneys.length();
+            int begin = leng % 3;
+            if (begin != 0)
+                builder.append(moneys.substring(0, begin)).append(".");
+            moneys = moneys.substring(begin);
+            while (moneys.length() != 0) {
+                builder.append(moneys.substring(0, 3));
+                if (moneys.length() != 3)
+                    builder.append(".");
+                else
+                    builder.append("đ");
+                moneys = moneys.substring(3);
 
+            }
+            return builder.toString();
         }
-        return builder.toString();
     }
 
     private void getData(final int limit, int offset) {
