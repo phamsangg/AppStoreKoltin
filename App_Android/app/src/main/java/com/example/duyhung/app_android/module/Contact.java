@@ -6,10 +6,21 @@ package com.example.duyhung.app_android.module;
 
 public class Contact {
 
+    private String phNum;
+    private int callType;
+    private Long callDate;
+    private String callDuration;
     private String name;
-    private String phone;
 
     public Contact() {
+    }
+
+    public Contact(String phNum, int callType, Long callDate, String callDuration) {
+        this.phNum = phNum;
+        this.callType = callType;
+        this.callDate = callDate;
+        this.callDuration = callDuration;
+
     }
 
     public String getName() {
@@ -20,11 +31,36 @@ public class Contact {
         this.name = name;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getPhNum() {
+        return phNum;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setPhNum(String phNum) {
+        this.phNum = phNum;
     }
+
+    public int getCallType() {
+        return callType;
+    }
+
+    public void setCallType(int callType) {
+        this.callType = callType;
+    }
+
+    public Long getCallDate() {
+        return callDate;
+    }
+
+    public void setCallDate(Long callDate) {
+        this.callDate = callDate;
+    }
+
+    public String getCallDuration() {
+        return callDuration;
+    }
+
+    public void setCallDuration(String callDuration) {
+        this.callDuration = callDuration;
+    }
+
 }

@@ -16,7 +16,7 @@ import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
-import com.example.duyhung.app_android.module.Result;
+import com.example.duyhung.app_android.service.modules.Result;
 import com.example.duyhung.app_android.module.Transfer;
 
 import java.util.Date;

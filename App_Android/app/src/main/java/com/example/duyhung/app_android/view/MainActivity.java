@@ -7,7 +7,9 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.database.Cursor;
 import android.os.Bundle;
+import android.provider.CallLog;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -28,17 +30,22 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
+import com.example.duyhung.app_android.callback.CallBackListObject;
 import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.callback.CallbackConfilm;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterContact;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
 import com.example.duyhung.app_android.event.ServiceReceiver;
+import com.example.duyhung.app_android.module.Contact;
 import com.example.duyhung.app_android.module.Customer;
-import com.example.duyhung.app_android.module.Result;
+import com.example.duyhung.app_android.service.modules.Result;
+import com.example.duyhung.app_android.service.AsyncReadCallLog;
+import com.example.duyhung.app_android.service.modules.ResultContact;
 import com.example.duyhung.app_android.view.dialog.AddCustomer;
 import com.example.duyhung.app_android.view.dialog.ConfilmDialog;
 import com.google.gson.Gson;
@@ -48,10 +55,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.duyhung.app_android.Config.GET_LAZYLOAD;
+import static com.example.duyhung.app_android.Config.GET_UPDATE;
 import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
-
-;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -59,21 +66,25 @@ public class MainActivity extends AppCompatActivity {
     private EditText search;
     View viewLoadingFooter;
     private int prevItem = 0;
+    private int prevItemCall = 0;
 
     private DrawerLayout mDrawerLayout;
     private ListView listViewCommingCall;
     private TextView noItem;
     private ImageView open;
-    private  FloatingActionButton fab;
+    private FloatingActionButton fab;
 
     private AdapterCustomer adapterCustomer;
     private List<Customer> customerList;
-    private List<Customer> listPhoneContact;
+    private List<Contact> listContact;
     private AdapterContact adapterContact;
-    private List<String> stringListPhoneContact;
+    private List<String> stringListPhoneContactl;
 
     private BroadcastReceiver receiver;
     private int MY_PERMISSIONS_REQUEST_SMS_RECEIVE = 10;
+    private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    private long timegetNewContact = Long.parseLong(String.valueOf(System.currentTimeMillis()));
+    private long timeLoadOLdContact = Long.parseLong(String.valueOf(System.currentTimeMillis()));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +97,7 @@ public class MainActivity extends AppCompatActivity {
         displayItemNavigation();
         registerEvent();
         registerService();
+        readHistoryCall(GET_LAZYLOAD);
 
         getData(LIMIT, 0, search.getText().toString().trim());
 
@@ -93,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void init() {
 
-        fab= findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
         open = findViewById(R.id.open_navigation);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -101,12 +113,12 @@ public class MainActivity extends AppCompatActivity {
         noItem = findViewById(R.id.txt_no_item);
         search = findViewById(R.id.search);
 
-        listPhoneContact = new ArrayList<>();
         customerList = new ArrayList<>();
-        stringListPhoneContact = new ArrayList<>();
+        listContact = new ArrayList<>();
+        stringListPhoneContactl = new ArrayList<>();
 
         adapterCustomer = new AdapterCustomer(this, R.layout.list_item_customer, customerList);
-        adapterContact = new AdapterContact(this, R.layout.item_contact, listPhoneContact);
+        adapterContact = new AdapterContact(this, R.layout.item_contact, listContact);
 
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
@@ -183,18 +195,43 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                final Customer customer = (Customer) adapterView.getItemAtPosition(i);
+                final Contact contact = (Contact) adapterView.getItemAtPosition(i);
                 mDrawerLayout.closeDrawers();
-                if (customer.getName() != null && customer.getDate() != null && customer.getDate() != null && customer.getCmt() != null
-                        && customer.getAddress() != null) {
-                    startTransferActivity(customer);
+                if (contact.getName() != null) {
+                    getDataCustomer(contact.getPhNum());
                 } else {
                     new ConfilmDialog().newInstance("Số điện thoại chưa tồn tại. Bạn có muốn tạo mới không ?", new CallbackConfilm() {
                         @Override
                         public void confilm() {
-                            addCustomer(customer.getPhone_number());
+                            addCustomer(contact.getPhNum());
                         }
                     }).show(getFragmentManager(), "");
+                }
+            }
+        });
+
+        listViewCommingCall.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+            }
+
+            @Override
+            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+
+                switch (view.getId()) {
+                    case R.id.list_comming_call:
+
+                        final int lastItem = firstVisibleItem + visibleItemCount;
+
+                        if (lastItem == totalItemCount) {
+
+                            if (firstVisibleItem != 0 && prevItemCall != lastItem) {
+                                readHistoryCall(GET_LAZYLOAD);
+                            }
+                            prevItemCall = lastItem;
+                        }
+                        break;
                 }
             }
         });
@@ -219,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
                 if (str != null && !str.equals("")) {
                     if (checkListPhone(str)) {
                         getDataCustomer(str);
-                        stringListPhoneContact.add(str);
+                        stringListPhoneContactl.add(str);
                     }
 
                 }
@@ -231,6 +268,11 @@ public class MainActivity extends AppCompatActivity {
                 new String[]{Manifest.permission.READ_PHONE_STATE},
                 MY_PERMISSIONS_REQUEST_SMS_RECEIVE);
 
+        ActivityCompat.requestPermissions(this,
+                new String[]{Manifest.permission.READ_CALL_LOG},
+                PERMISSIONS_REQUEST_READ_CONTACTS);
+
+
         LocalBroadcastManager.getInstance(this).registerReceiver(receiver,
                 new IntentFilter(ServiceReceiver.NOTIFICATION));
 
@@ -238,7 +280,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void displayItemNavigation() {
 
-        if (listPhoneContact.size() == 0) {
+        if (listContact.size() == 0) {
             noItem.setVisibility(View.VISIBLE);
             listViewCommingCall.setVisibility(View.GONE);
         } else {
@@ -247,14 +289,15 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void addCustomer(String phone) {
+    private void addCustomer(final String phone) {
+
         AddCustomer addCustomer = null;
         if (phone == null)
             addCustomer = new AddCustomer().newInstance(this, new CallBackObject() {
                 @Override
                 public void returnObject(Object object) {
                     customerList.add(0, (Customer) object);
-                    adapterCustomer.notifyDataSetChanged();
+                    notifyListContact(((Customer) object).getName(), phone);
                 }
             });
         else
@@ -262,11 +305,21 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void returnObject(Object object) {
                     customerList.add(0, (Customer) object);
-                    adapterCustomer.notifyDataSetChanged();
+                    notifyListContact(((Customer) object).getName(), phone);
+
                 }
             }, phone);
         addCustomer.show(getFragmentManager(), "");
 
+        adapterCustomer.notifyDataSetChanged();
+    }
+
+    private void notifyListContact(String name, String phone) {
+        for (Contact contact : listContact) {
+            if (contact.getPhNum().equals(phone))
+                contact.setName(name);
+        }
+        adapterContact.notifyDataSetChanged();
     }
 
     private void search(String keyWord) {
@@ -337,9 +390,8 @@ public class MainActivity extends AppCompatActivity {
                                 customer.setAddress(myObjects.get(0).getAddress());
                                 customer.setCmt(myObjects.get(0).getCmt());
                                 customer.setLateDateItem(myObjects.get(0).getLateDateItem());
+                                startTransferActivity(customer);
                             }
-                            listPhoneContact.add(0, customer);
-                            adapterContact.notifyDataSetChanged();
 
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
@@ -372,7 +424,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private boolean checkListPhone(String string) {
-        for (String phone : stringListPhoneContact) {
+        for (String phone : stringListPhoneContactl) {
             if (string.equals(phone)) {
                 return false;
             }
@@ -405,4 +457,84 @@ public class MainActivity extends AppCompatActivity {
         startActivity(nextActivity);
     }
 
+    private void readHistoryCall(final String type) {
+        Cursor managedCursor = getCursor(type);
+        new AsyncReadCallLog(managedCursor, this, new CallBackListObject() {
+            @Override
+            public void getListObject(List list) {
+                if (type.equals(GET_UPDATE))
+                    listContact.addAll(0, list);
+                else {
+                    listContact.addAll(list);
+                    Contact contact = (Contact) list.get(list.size() - 1);
+                    timeLoadOLdContact = contact.getCallDate();
+                }
+                getListName(list);
+                adapterContact.notifyDataSetChanged();
+                displayItemNavigation();
+            }
+        }).execute();
+
+    }
+
+    private void getListName(final List<Contact> contactList) {
+
+        List<String> stringList = new ArrayList<>();
+        for (Contact contact : contactList) {
+            stringList.add(contact.getPhNum());
+        }
+        Controler controler = new Controler(this, URL);
+        controler.getListName(new CallBackAction() {
+            @Override
+            public void excute(Result result) {
+                View view = getWindow().getDecorView().findViewById(android.R.id.content);
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        try {
+                            Gson gson = new Gson();
+                            ResultContact[] object = gson.fromJson(result.getResult(), ResultContact[].class);
+                            List<ResultContact> myObjects = new ArrayList<>(Arrays.asList(object));
+
+                            for (int i = prevItemCall; i < listContact.size(); i++) {
+                                for (ResultContact myObject : myObjects) {
+                                    if (contactList.get(i).getPhNum().equals(myObject.getPhone()))
+                                        contactList.get(i).setName(myObject.getName());
+                                }
+                            }
+
+                            adapterContact.notifyDataSetChanged();
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    Snackbar.make(view, "No intenet connection", Snackbar.LENGTH_LONG)
+                            .setAction("Action", null).show();
+                }
+            }
+        }, stringList);
+        return;
+    }
+
+    private Cursor getCursor(String type) {
+        String WHERE = null;
+        String WHERE_CONDITION = null;
+        String ORDER_BY = " date DESC";
+
+        if (type.equals(GET_UPDATE)) {
+            WHERE = "date > ?";
+            WHERE_CONDITION = String.valueOf(this.timegetNewContact);
+        } else {
+            WHERE = "date < ?";
+            ORDER_BY += " limit " + LIMIT;
+            WHERE_CONDITION = String.valueOf(this.timeLoadOLdContact);
+        }
+
+
+        Cursor managedCursor = managedQuery(CallLog.Calls.CONTENT_URI, null,
+                WHERE, new String[]{WHERE_CONDITION},
+                ORDER_BY);
+        return managedCursor;
+    }
 }

@@ -1,4 +1,4 @@
-package com.example.duyhung.app_android.module;
+package com.example.duyhung.app_android.service.modules;
 
 /**
  * Created by thetainguyen on 28/11/17.

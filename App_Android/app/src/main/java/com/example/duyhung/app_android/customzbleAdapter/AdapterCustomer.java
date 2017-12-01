@@ -16,6 +16,8 @@ import com.example.duyhung.app_android.module.Customer;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import static com.example.duyhung.app_android.Config.ft;
+
 /**
  * Created by thetainguyen on 26/11/17.
  */
@@ -46,7 +48,6 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
         }
 
         Customer customer = getItem(position);
-        SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
         if(customer.getName()!=null)
         viewHolder.name.setText(customer.getName());
         if(customer.getPhone_number()!=null)

@@ -24,6 +24,10 @@ var Customer = {
             '(select date_transfer from transfer where customer_phone_number = customer.phone_number order by date_transfer desc limit 1) as lateDateItem' +
             ' from customer ' +
             'where phone_number = ?', [phone], Callback);
+    },
+
+    getListName: function (array, Callback) {
+        return db.query('select customer.name as name,customer.phone_number as phone from customer where phone_number in ' + array, Callback);
     }
 };
 

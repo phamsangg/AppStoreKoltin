@@ -1,69 +1,69 @@
 package com.example.duyhung.app_android.service;
 
-import android.app.Activity;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.service.modules.Result;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-
 import static com.example.duyhung.app_android.Config.TIMEOUT_MILLISEC;
 
 /**
- * Created by thetainguyen on 27/11/17.
+ * Created by thetainguyen on 01/12/17.
  */
 
-public class AsyncSendData extends AsyncTask<Void, Void, Void> {
+public class AsyncGetListName extends AsyncTask<Void, Void, Void> {
 
-    private Activity activity;
-    private String url;
-    private CallBackAction callBackAction;
-    private Result result;
+    private String URL;
+    String responseString = null;
+    CallBackAction callBackAction;
+    Result result = null;
 
-    public AsyncSendData(Activity activity, String url, CallBackAction callBackAction) {
-        this.activity = activity;
-        this.url = url;
+    public AsyncGetListName(String URL, CallBackAction callBackAction) {
+        this.URL = URL;
+
         this.callBackAction = callBackAction;
     }
 
     @Override
     protected Void doInBackground(Void... voids) {
 
-        int key = 0;
-        String value = "";
+        HttpPost postRequest = new HttpPost(URL);
 
         HttpParams httpParams = new BasicHttpParams();
         HttpConnectionParams.setConnectionTimeout(httpParams, TIMEOUT_MILLISEC);
         HttpConnectionParams.setSoTimeout(httpParams, TIMEOUT_MILLISEC);
 
         try {
-            HttpClient httpclient = new DefaultHttpClient();
-            HttpGet httpGet = new HttpGet(url);
-            HttpResponse response = httpclient.execute(httpGet);
+
+            HttpClient httpClient = new DefaultHttpClient(httpParams);
+
+            HttpGet httpGet = new HttpGet(URL);
+            HttpResponse httpResponse = httpClient.execute(httpGet);
             result = new Result();
-            HttpEntity httpEntity = response.getEntity();
-            key = response.getStatusLine().getStatusCode();
-            value = EntityUtils.toString(httpEntity);
-            result.setResult(value);
-            result.setStatus(key);
+            result.setStatus( httpResponse.getStatusLine().getStatusCode());
+            HttpEntity httpEntity = httpResponse.getEntity();
 
-        } catch (ClientProtocolException e) {
+            result.setResult(EntityUtils.toString(httpEntity));
 
-        } catch (IOException e) {
 
+        } catch (Exception e) {
+            // TODO: handle exception
+            postRequest.abort();
+            Log.w("HttpPostRetreiver", "Error for URL " + URL, e);
         }
+
         return null;
     }
 

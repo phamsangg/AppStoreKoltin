@@ -17,6 +17,8 @@ import com.example.duyhung.app_android.view.ActivityTransfer;
 import java.text.SimpleDateFormat;
 import java.util.List;
 
+import static com.example.duyhung.app_android.Config.ft;
+
 /**
  * Created by thetainguyen on 26/11/17.
  */
@@ -47,8 +49,6 @@ public class AdapterTranfer extends ArrayAdapter<Transfer> {
         }
 
         Transfer transfer = getItem(position);
-
-        SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
 
         viewHolder.nameProduct.setText(transfer.getItem());
         viewHolder.date.setText(ft.format(transfer.getDate_transfer()).toString());

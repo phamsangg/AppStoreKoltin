@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express();
 var dateFormat = require('dateformat');
+var parseString = require('xml2js').parseString;
 
 var Customer = require('./model/Customer');
 var Transfer = require('./model/Transfer');
@@ -64,6 +65,30 @@ router.get('/get/customer/phone', function (req, res) {
     });
 });
 
+router.get('/get/customer/listname', function (req, res) {
+
+    var list = req.query.listphone;
+
+    var string = '(';
+    var myObject = JSON.parse(list);
+    for (var i = 0; i < myObject.contact.length; i++) {
+        var counter = myObject.contact[i];
+        string += counter.phone;
+        if (i != myObject.contact.length - 1)
+            string += ',';
+    }
+    string += ")";
+    Customer.getListName(string, function (err, row) {
+        if (!err) {
+            res.status(200).send(row);
+            console.dir(JSON.stringify(row));
+        } else {
+            res.status(500).send(err);
+            console.dir(err);
+        }
+    });
+
+});
 
 router.get('/get/transfer', function (req, res) {
 
@@ -91,6 +116,5 @@ router.get('/get/transfer/sum', function (req, res) {
         }
     });
 });
-
 
 module.exports = router;

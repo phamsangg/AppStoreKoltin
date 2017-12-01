@@ -6,12 +6,19 @@ import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.module.Customer;
 import com.example.duyhung.app_android.module.Transfer;
 import com.example.duyhung.app_android.service.AsyncGetData;
+import com.example.duyhung.app_android.service.AsyncGetListName;
 import com.example.duyhung.app_android.service.AsyncSendData;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.List;
 
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER;
+import static com.example.duyhung.app_android.Config.GET_CUSTOMER_LIST_NAME;
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER_PHONE;
 import static com.example.duyhung.app_android.Config.GET_SUM;
 import static com.example.duyhung.app_android.Config.GET_TRANSFER;
@@ -106,6 +113,32 @@ public class Controler {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public void getListName(CallBackAction callBackAction, List<String> phoneID) {
+
+
+        try {
+            JSONObject jsonObject = new JSONObject();
+            JSONArray jsonArray = new JSONArray();
+            for (String s : phoneID) {
+                JSONObject data = new JSONObject();
+                data.put("phone",s);
+                jsonArray.put(data);
+            }
+            jsonObject.put("contact",jsonArray);
+
+            String listPhone = URLEncoder.encode(jsonObject.toString(), "utf-8");
+            url += GET_CUSTOMER_LIST_NAME + "?listphone=" + listPhone;
+            new AsyncGetListName(url, callBackAction).execute();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return;
     }
 
 }
