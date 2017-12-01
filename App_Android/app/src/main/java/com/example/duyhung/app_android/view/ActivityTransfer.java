@@ -175,7 +175,7 @@ public class ActivityTransfer extends AppCompatActivity {
         getSumMoney();
     }
 
-    private String printMoney(String moneys) {
+    public static String printMoney(String moneys) {
         if (moneys.equals("0")) {
             return "0đ";
         } else {

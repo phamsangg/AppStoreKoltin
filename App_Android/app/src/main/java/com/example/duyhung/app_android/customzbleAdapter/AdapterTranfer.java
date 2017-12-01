@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.module.Transfer;
+import com.example.duyhung.app_android.view.ActivityTransfer;
 
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -51,30 +52,10 @@ public class AdapterTranfer extends ArrayAdapter<Transfer> {
 
         viewHolder.nameProduct.setText(transfer.getItem());
         viewHolder.date.setText(ft.format(transfer.getDate_transfer()).toString());
-        viewHolder.money.setText(printMoney(transfer.getMoney() + ""));
+        viewHolder.money.setText(ActivityTransfer.printMoney(transfer.getMoney() + ""));
 
         return convertView;
     }
-
-    private String printMoney(String moneys) {
-        StringBuilder builder = new StringBuilder();
-        int leng = moneys.length();
-        int begin = leng % 3;
-        if (begin != 0)
-            builder.append(moneys.substring(0, begin)).append(".");
-        moneys = moneys.substring(begin);
-        while (moneys.length() != 0) {
-            builder.append(moneys.substring(0, 3));
-            if (moneys.length() != 3)
-                builder.append(".");
-            else
-                builder.append("đ");
-            moneys = moneys.substring(3);
-
-        }
-        return builder.toString();
-    }
-
 
     class ViewHolder {
         TextView nameProduct;
