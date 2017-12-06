@@ -160,7 +160,7 @@ public class ActivityTransfer extends AppCompatActivity {
 
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
-        listView.addFooterView(viewLoadingFooter);
+        listView.addFooterView(viewLoadingFooter,null,false);
 
     }
 
