@@ -30,6 +30,22 @@ var Customer = {
 
     getListName: function (array, Callback) {
         return db.query('select customer.name as name,customer.phone_number as phone from customer where phone_number in ' + array, Callback);
+    },
+
+    update: function (phone, address, name, cmt, Callback) {
+        if (address == 'undefined')
+            return db.query('update customer set name  = ?, cmt = ? where phone_number = ?', [name, cmt, phone], Callback);
+        if (address == 'undefined' && name == 'undefined')
+            return db.query('update customer set cmt = ? where phone_number = ?', [cmt, phone], Callback);
+        if (address == 'undefined' && cmt == 'undefined')
+            return db.query('update customer set name  = ? where phone_number = ?', [name, phone], Callback);
+        if (name == 'undefined')
+            return db.query('update customer set cmt = ? , address = ? where phone_number = ?', [cmt, address, phone], Callback);
+        if (name == 'undefined' && cmt == 'undefined')
+            return db.query('update customer set address = ? where phone_number = ?', [address, phone], Callback);
+        if (cmt == 'undefined')
+            return db.query('update customer set name  = ?, address = ? where phone_number = ?', [name, address, phone], Callback);
+        return db.query('update customer set name  = ?, cmt = ? , address = ? where phone_number = ?', [name, cmt, address, phone], Callback);
     }
 };
 

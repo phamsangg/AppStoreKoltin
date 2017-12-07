@@ -1,18 +1,22 @@
 package com.example.duyhung.app_android.view;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
@@ -45,13 +49,15 @@ public class ActivityTransfer extends AppCompatActivity {
     private int prevItem = 0;
     private long numberMoney = 0L;
 
-    private TextView name;
-    private TextView phoneNumber;
-    private TextView sumMoney;
-    private TextView address;
-    private TextView date;
-    private TextView cmt;
+    private EditText name;
+    private EditText phoneNumber;
+    private EditText sumMoney;
+    private EditText address;
+    private EditText date;
+    private EditText cmt;
     private FloatingActionButton fab;
+    private TextView update;
+    private ProgressDialog progressDialog;
 
 
     @Override
@@ -65,7 +71,7 @@ public class ActivityTransfer extends AppCompatActivity {
         customer = (Customer) getIntent().getSerializableExtra("customer");
         init();
         registerEvent();
-        setText();
+        setText(customer);
         getData(LIMIT, prevItem);
 
     }
@@ -105,6 +111,75 @@ public class ActivityTransfer extends AppCompatActivity {
             }
         });
 
+        update.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("thetai: " + R.string.title_edit);
+                if (update.getText().toString().equals(getResources().getString(R.string.title_edit)))
+                    edit();
+                else
+                    update();
+            }
+        });
+
+    }
+
+    private void edit() {
+        update.setText(getText(R.string.title_update));
+        setEnable(true);
+        setTextNull();
+    }
+
+    private void update() {
+        update.setText(getText(R.string.title_edit));
+        setEnable(false);
+        boolean cancel = true;
+        if (customer.getCmt() == null && !TextUtils.isEmpty(cmt.getText()))
+            cancel = false;
+        if (customer.getName() == null && !TextUtils.isEmpty(name.getText()))
+            cancel = false;
+        if (customer.getAddress() == null && !TextUtils.isEmpty(address.getText()))
+            cancel = false;
+        if (customer.getCmt() != null && !customer.getCmt().equals(cmt.getText().toString().trim()))
+            cancel = false;
+        if (customer.getName() != null && !customer.getName().equals(name.getText().toString().trim()))
+            cancel = false;
+        if (customer.getAddress() != null && !customer.getAddress().equals(address.getText().toString().trim()))
+            cancel = false;
+
+        if (!cancel) {
+            Customer customer = new Customer();
+            customer.setPhone_number(this.customer.getPhone_number());
+            if (!TextUtils.isEmpty(name.getText()))
+                customer.setName(name.getText().toString().trim());
+            if (!TextUtils.isEmpty(address.getText()))
+                customer.setAddress(address.getText().toString().trim());
+            if (!TextUtils.isEmpty(cmt.getText()))
+                customer.setCmt(cmt.getText().toString().trim());
+
+            setUpdate(customer);
+        }
+
+    }
+
+    private void setEnable(boolean enable) {
+        name.setEnabled(enable);
+        address.setEnabled(enable);
+        cmt.setEnabled(enable);
+    }
+
+    private void setTextNull() {
+        if (customer.getName() == null)
+            name.setText("");
+        else
+            name.setText(customer.getName());
+        if (customer.getAddress() == null)
+            address.setText("");
+        else address.setText(customer.getAddress());
+        if (customer.getCmt() == null)
+            cmt.setText("");
+        else
+            cmt.setText(customer.getCmt());
     }
 
     private void newTransfer() {
@@ -126,24 +201,6 @@ public class ActivityTransfer extends AppCompatActivity {
         overridePendingTransition(R.anim.slide_left_to_right_in, R.anim.slide_left_to_right_out);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_transfer, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-
-        int id = item.getItemId();
-
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
     private void init() {
         name = findViewById(R.id.name_customer);
         phoneNumber = findViewById(R.id.phone_number);
@@ -152,6 +209,7 @@ public class ActivityTransfer extends AppCompatActivity {
         date = findViewById(R.id.date);
         cmt = findViewById(R.id.cmt);
         fab = (FloatingActionButton) findViewById(R.id.fab);
+        update = findViewById(R.id.update);
 
         transferList = new ArrayList<>();
         listView = (ListView) findViewById(R.id.list_transfer);
@@ -164,7 +222,7 @@ public class ActivityTransfer extends AppCompatActivity {
 
     }
 
-    private void setText() {
+    private void setText(Customer customer) {
         SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
         if (customer.getName() != null)
             name.setText(customer.getName());
@@ -273,5 +331,44 @@ public class ActivityTransfer extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void setUpdate(final Customer customer) {
+        showDialog();
+        Controler controler = new Controler(this, URL);
+        controler.updateCustomer(new CallBackAction() {
+            @Override
+            public void excute(Result result) {
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        setText(customer);
+                        Toast.makeText(getBaseContext(), "update successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getBaseContext(), "update fail", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(getBaseContext(), "update fail", Toast.LENGTH_SHORT).show();
+                }
+                hideDialog();
+            }
+        }, customer);
+    }
+
+    private void showDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+        }
+        if (!progressDialog.isShowing()) {
+            progressDialog.setMessage("updating...");
+            progressDialog.show();
+        }
+
+    }
+
+    private void hideDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
     }
 }

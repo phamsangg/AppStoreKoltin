@@ -24,6 +24,7 @@ import static com.example.duyhung.app_android.Config.GET_SUM;
 import static com.example.duyhung.app_android.Config.GET_TRANSFER;
 import static com.example.duyhung.app_android.Config.INSERT_CUSTOMER;
 import static com.example.duyhung.app_android.Config.INSERT_TRANSFER;
+import static com.example.duyhung.app_android.Config.UPDATE_CUSTOMER;
 
 
 /**
@@ -155,6 +156,32 @@ public class Controler {
         }
 
         return;
+    }
+
+    public void updateCustomer(CallBackAction callBackAction, Customer customer) {
+        try {
+            String phone = URLEncoder.encode(customer.getPhone_number(), "utf-8");
+            url += UPDATE_CUSTOMER + "?phone_number=" + phone;
+            if (customer.getName() != null) {
+                String name = URLEncoder.encode(customer.getName(), "utf-8");
+                url += "&name=" + name;
+            }
+
+            if (customer.getAddress() != null) {
+                String address = URLEncoder.encode(customer.getAddress(), "utf-8");
+                url += "&address=" + address;
+            }
+
+            if (customer.getCmt() != null) {
+                String cmt = URLEncoder.encode(customer.getCmt().toString(), "utf-8");
+                url += "&cmt=" + cmt;
+            }
+
+            new AsyncSendData(activity, url, callBackAction).execute();
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
 }

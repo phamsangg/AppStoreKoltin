@@ -53,6 +53,23 @@ router.get('/get/customer', function (req, res) {
     });
 });
 
+router.get('/update/customer',function (req,res) {
+
+    var phone = req.query.phone_number;
+    var address = req.query.address;
+    var name = req.query.name;
+    var cmt = req.query.cmt;
+    var date = dateFormat(req.query.date, "yyyy-mm-dd HH:MM:ss");
+
+    Customer.update(phone, address, name, cmt, function (err, count) {
+        if (err) {
+            res.status(500).json(err);
+        } else {
+            res.status(200).json(req.body);
+        }
+    });
+});
+
 router.get('/get/customer/phone', function (req, res) {
     var phone = req.query.phone_number;
 

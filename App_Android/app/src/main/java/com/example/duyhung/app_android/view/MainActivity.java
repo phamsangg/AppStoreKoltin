@@ -53,6 +53,7 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER_PHONE;
@@ -103,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         displayItemNavigation();
         registerEvent();
         registerService();
-        readHistoryCall(GET_LAZYLOAD,prevItemCall);
+        readHistoryCall(GET_LAZYLOAD, prevItemCall);
 
         getData(LIMIT, 0, search.getText().toString().trim());
 
@@ -597,6 +598,7 @@ public class MainActivity extends AppCompatActivity {
     private Customer getCustomer(String phone) {
         Customer customer = new Customer();
         customer.setPhone_number(phone);
+        customer.setDate(new Date());
         return customer;
     }
 

@@ -18,6 +18,7 @@ public interface Config {
     String GET_SUM = "/get/transfer/sum";
     String GET_CUSTOMER_PHONE = "/get/customer/phone";
     String GET_CUSTOMER_LIST_NAME = "/get/customer/listname";
+    String UPDATE_CUSTOMER = "/update/customer";
     String GET_UPDATE = "UPDATE";
     String GET_LAZYLOAD = "LAZYLOAD";
     String GET_RESULT_NEW_TRANSFER = "NEWTRANSFER";

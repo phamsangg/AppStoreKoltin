@@ -17,4 +17,6 @@
     <string name="not_name">(No Name)</string>
     <string name="not_transfer">(No item transfer)</string>
     <string name="not_info">no infomation</string>
+    <string name="title_edit">EDIT</string>
+    <string name="title_update">UPDATE</string>
 </resources>
