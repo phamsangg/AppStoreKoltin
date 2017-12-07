@@ -73,12 +73,28 @@ public class Controler {
     public void addCustomer(CallBackAction callBackAction, Customer customer) {
 
         try {
-            String name = URLEncoder.encode(customer.getName(), "utf-8");
-            String address = URLEncoder.encode(customer.getAddress(), "utf-8");
             String phone = URLEncoder.encode(customer.getPhone_number(), "utf-8");
-            String cmt = URLEncoder.encode(customer.getCmt().toString(), "utf-8");
-            String date = URLEncoder.encode(customer.getDate().toString(), "utf-8");
-            url += INSERT_CUSTOMER + "?phone_number=" + phone + "&name=" + name + "&address=" + address + "&cmt=" + cmt + "&date=" + date;
+            url += INSERT_CUSTOMER + "?phone_number=" + phone;
+            if (customer.getName() != null) {
+                String name = URLEncoder.encode(customer.getName(), "utf-8");
+                url += "&name=" + name;
+            }
+
+            if (customer.getAddress() != null) {
+                String address = URLEncoder.encode(customer.getAddress(), "utf-8");
+                url += "&address=" + address;
+            }
+
+            if (customer.getCmt() != null) {
+                String cmt = URLEncoder.encode(customer.getCmt().toString(), "utf-8");
+                url += "&cmt=" + cmt;
+            }
+
+            if (customer.getDate() != null) {
+                String date = URLEncoder.encode(customer.getDate().toString(), "utf-8");
+                url += "&date=" + date;
+            }
+
             new AsyncSendData(activity, url, callBackAction).execute();
 
         } catch (UnsupportedEncodingException e) {
@@ -123,10 +139,10 @@ public class Controler {
             JSONArray jsonArray = new JSONArray();
             for (String s : phoneID) {
                 JSONObject data = new JSONObject();
-                data.put("phone",s);
+                data.put("phone", s);
                 jsonArray.put(data);
             }
-            jsonObject.put("contact",jsonArray);
+            jsonObject.put("contact", jsonArray);
 
             String listPhone = URLEncoder.encode(jsonObject.toString(), "utf-8");
             url += GET_CUSTOMER_LIST_NAME + "?listphone=" + listPhone;

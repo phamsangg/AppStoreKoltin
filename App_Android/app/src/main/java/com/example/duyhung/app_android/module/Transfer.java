@@ -1,12 +1,13 @@
 package com.example.duyhung.app_android.module;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by thetainguyen on 26/11/17.
  */
 
-public class Transfer {
+public class Transfer implements Serializable{
 
     private Date date_transfer;
     private int money;

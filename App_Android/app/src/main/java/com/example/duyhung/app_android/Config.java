@@ -20,6 +20,9 @@ public interface Config {
     String GET_CUSTOMER_LIST_NAME = "/get/customer/listname";
     String GET_UPDATE = "UPDATE";
     String GET_LAZYLOAD = "LAZYLOAD";
+    String GET_RESULT_NEW_TRANSFER = "NEWTRANSFER";
+    String GET_RESULT_PHONE = "PHONENUMBERTRANSFER";
+    String GET_RESULT_NEW_CUSTOMER = "NEWCUSTOMER";
 
     int TIMEOUT_MILLISEC = 30000;  // = 10 seconds
     int LIMIT = 20;

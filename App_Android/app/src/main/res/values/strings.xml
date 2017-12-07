@@ -16,4 +16,5 @@
     <string name="no_item">No Item!</string>
     <string name="not_name">(No Name)</string>
     <string name="not_transfer">(No item transfer)</string>
+    <string name="not_info">no infomation</string>
 </resources>

@@ -2,6 +2,8 @@ var db = require('../Dbconnection');
 
 var Customer = {
     addCustomer: function (phone, address, name, cmt, date, Callback) {
+        if (address == 'undefined' && name == 'undefined' && date == 'undefined' && cmt == 'undefined')
+            return db.query('insert into customer(phone_number) values(?)', [phone], Callback);
         return db.query('insert into customer(phone_number,name,cmt,address,date_create) values(?,?,?,?,?)', [phone, name, cmt, address, date], Callback);
     },
 

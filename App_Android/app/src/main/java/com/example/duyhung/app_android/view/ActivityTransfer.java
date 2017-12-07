@@ -160,18 +160,32 @@ public class ActivityTransfer extends AppCompatActivity {
 
         LayoutInflater inflater = (LayoutInflater) getBaseContext().getSystemService(Activity.LAYOUT_INFLATER_SERVICE);
         viewLoadingFooter = inflater.inflate(R.layout.layout_loading, null);
-        listView.addFooterView(viewLoadingFooter,null,false);
+        listView.addFooterView(viewLoadingFooter, null, false);
 
     }
 
     private void setText() {
         SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
-        name.setText(customer.getName());
-        phoneNumber.setText(customer.getPhone_number());
-        sumMoney.setText("");
-        address.setText(customer.getAddress());
-        date.setText(ft.format(customer.getDate()).toString());
-        cmt.setText(customer.getCmt().toString());
+        if (customer.getName() != null)
+            name.setText(customer.getName());
+        else
+            name.setText(getText(R.string.not_info));
+        if (customer.getPhone_number() != null)
+            phoneNumber.setText(customer.getPhone_number());
+        else
+            phoneNumber.setText(getText(R.string.not_info));
+        if (customer.getAddress() != null)
+            address.setText(customer.getAddress());
+        else
+            address.setText(getText(R.string.not_info));
+        if (customer.getDate() != null)
+            date.setText(ft.format(customer.getDate()).toString());
+        else
+            date.setText(getText(R.string.not_info));
+        if (customer.getCmt() != null)
+            cmt.setText(customer.getCmt().toString());
+        else
+            cmt.setText(getText(R.string.not_info));
         getSumMoney();
     }
 

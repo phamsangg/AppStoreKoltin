@@ -3,6 +3,7 @@ package com.example.duyhung.app_android.view;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,7 +36,6 @@ import android.widget.Toast;
 import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.callback.CallBackListObject;
-import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.callback.CallbackConfilm;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterContact;
@@ -43,10 +43,10 @@ import com.example.duyhung.app_android.customzbleAdapter.AdapterCustomer;
 import com.example.duyhung.app_android.event.ServiceReceiver;
 import com.example.duyhung.app_android.module.Contact;
 import com.example.duyhung.app_android.module.Customer;
+import com.example.duyhung.app_android.module.Transfer;
 import com.example.duyhung.app_android.service.modules.Result;
 import com.example.duyhung.app_android.service.AsyncReadCallLog;
 import com.example.duyhung.app_android.service.modules.ResultContact;
-import com.example.duyhung.app_android.view.dialog.AddCustomer;
 import com.example.duyhung.app_android.view.dialog.ConfilmDialog;
 import com.google.gson.Gson;
 
@@ -55,7 +55,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.duyhung.app_android.Config.GET_CUSTOMER_PHONE;
 import static com.example.duyhung.app_android.Config.GET_LAZYLOAD;
+import static com.example.duyhung.app_android.Config.GET_RESULT_NEW_CUSTOMER;
+import static com.example.duyhung.app_android.Config.GET_RESULT_NEW_TRANSFER;
+import static com.example.duyhung.app_android.Config.GET_RESULT_PHONE;
 import static com.example.duyhung.app_android.Config.GET_UPDATE;
 import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
@@ -73,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView noItem;
     private ImageView open;
     private FloatingActionButton fab;
+    private ProgressDialog progressDialog;
 
     private AdapterCustomer adapterCustomer;
     private List<Customer> customerList;
@@ -83,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
     private BroadcastReceiver receiver;
     private int MY_PERMISSIONS_REQUEST_SMS_RECEIVE = 10;
     private static final int PERMISSIONS_REQUEST_READ_CONTACTS = 100;
+    private static final int REQUEST_CODE_FOR_RESULT = 1;
     private long timegetNewContact = Long.parseLong(String.valueOf(System.currentTimeMillis()));
     private long timeLoadOLdContact = Long.parseLong(String.valueOf(System.currentTimeMillis()));
 
@@ -97,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         displayItemNavigation();
         registerEvent();
         registerService();
-        readHistoryCall(GET_LAZYLOAD);
+        readHistoryCall(GET_LAZYLOAD,prevItemCall);
 
         getData(LIMIT, 0, search.getText().toString().trim());
 
@@ -134,7 +140,8 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addCustomer(null);
+                Intent i = new Intent(MainActivity.this, ScreenSlidePagerActivity.class);
+                startActivityForResult(i, REQUEST_CODE_FOR_RESULT);
             }
         });
 
@@ -203,7 +210,9 @@ public class MainActivity extends AppCompatActivity {
                     new ConfilmDialog().newInstance("Số điện thoại chưa tồn tại. Bạn có muốn tạo mới không ?", new CallbackConfilm() {
                         @Override
                         public void confilm() {
-                            addCustomer(contact.getPhNum());
+                            Intent intent = new Intent(MainActivity.this, ScreenSlidePagerActivity.class);
+                            intent.putExtra(GET_RESULT_PHONE, contact.getPhNum());
+                            startActivityForResult(intent, REQUEST_CODE_FOR_RESULT);
                         }
                     }).show(getFragmentManager(), "");
                 }
@@ -227,9 +236,8 @@ public class MainActivity extends AppCompatActivity {
                         if (lastItem == totalItemCount) {
 
                             if (firstVisibleItem != 0 && prevItemCall != lastItem) {
-                                readHistoryCall(GET_LAZYLOAD);
+                                readHistoryCall(GET_LAZYLOAD, lastItem);
                             }
-                            prevItemCall = lastItem;
                         }
                         break;
                 }
@@ -287,31 +295,6 @@ public class MainActivity extends AppCompatActivity {
             noItem.setVisibility(View.GONE);
             listViewCommingCall.setVisibility(View.VISIBLE);
         }
-    }
-
-    private void addCustomer(final String phone) {
-
-        AddCustomer addCustomer = null;
-        if (phone == null)
-            addCustomer = new AddCustomer().newInstance(this, new CallBackObject() {
-                @Override
-                public void returnObject(Object object) {
-                    customerList.add(0, (Customer) object);
-                    notifyListContact(((Customer) object).getName(), phone);
-                }
-            });
-        else
-            addCustomer = new AddCustomer().newInstance(this, new CallBackObject() {
-                @Override
-                public void returnObject(Object object) {
-                    customerList.add(0, (Customer) object);
-                    notifyListContact(((Customer) object).getName(), phone);
-
-                }
-            }, phone);
-        addCustomer.show(getFragmentManager(), "");
-
-        adapterCustomer.notifyDataSetChanged();
     }
 
     private void notifyListContact(String name, String phone) {
@@ -457,7 +440,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(nextActivity);
     }
 
-    private void readHistoryCall(final String type) {
+    private void readHistoryCall(final String type, final int lastItem) {
         Cursor managedCursor = getCursor(type);
         new AsyncReadCallLog(managedCursor, this, new CallBackListObject() {
             @Override
@@ -470,6 +453,7 @@ public class MainActivity extends AppCompatActivity {
                     timeLoadOLdContact = contact.getCallDate();
                 }
                 getListName(list);
+                prevItemCall = lastItem;
                 adapterContact.notifyDataSetChanged();
                 displayItemNavigation();
             }
@@ -497,8 +481,10 @@ public class MainActivity extends AppCompatActivity {
 
                             for (int i = prevItemCall; i < listContact.size(); i++) {
                                 for (ResultContact myObject : myObjects) {
-                                    if (contactList.get(i).getPhNum().equals(myObject.getPhone()))
+                                    if (contactList.get(i).getPhNum().equals(myObject.getPhone())) {
                                         contactList.get(i).setName(myObject.getName());
+                                        break;
+                                    }
                                 }
                             }
 
@@ -537,4 +523,99 @@ public class MainActivity extends AppCompatActivity {
                 ORDER_BY);
         return managedCursor;
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_CODE_FOR_RESULT) {
+            try {
+                Customer customer = (Customer) data.getExtras().getSerializable(GET_RESULT_NEW_CUSTOMER);
+                addCustomer(customer, null);
+            } catch (NullPointerException e) {
+            }
+
+            try {
+                Transfer transfer = (Transfer) data.getExtras().getSerializable(GET_RESULT_NEW_TRANSFER);
+                String phone = data.getStringExtra(GET_CUSTOMER_PHONE);
+                addCustomer(getCustomer(phone), transfer);
+
+            } catch (NullPointerException e) {
+            }
+
+        }
+
+
+    }
+
+    private void addCustomer(final Customer customer, final Transfer transfer) {
+        showDialog();
+        Controler controler = new Controler(this, URL);
+        controler.addCustomer(new CallBackAction() {
+            @Override
+            public void excute(Result result) {
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+                        Toast.makeText(getBaseContext(), "create successfully", Toast.LENGTH_SHORT).show();
+                        if (transfer != null) {
+                            addTransfer(transfer, customer.getPhone_number());
+                        }
+                        customerList.add(0, customer);
+                        adapterCustomer.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getBaseContext(), "create fail", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(getBaseContext(), "create fail", Toast.LENGTH_SHORT).show();
+                }
+                hideDialog();
+            }
+        }, customer);
+    }
+
+    private void addTransfer(Transfer transfer, String phoneNumber) {
+        Controler controler = new Controler(this, URL);
+        controler.addTrasfer(new CallBackAction() {
+
+            @Override
+            public void excute(Result result) {
+                if (result != null) {
+                    if (result.getStatus() == 200) {
+
+                        Toast.makeText(getBaseContext(), "create successfully", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(getBaseContext(), "create fail", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    Toast.makeText(getBaseContext(), "create fail", Toast.LENGTH_SHORT).show();
+                }
+                hideDialog();
+            }
+        }, transfer, phoneNumber);
+    }
+
+    private Customer getCustomer(String phone) {
+        Customer customer = new Customer();
+        customer.setPhone_number(phone);
+        return customer;
+    }
+
+
+    private void showDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(this);
+        }
+        if (!progressDialog.isShowing()) {
+            progressDialog.setMessage("creating...");
+            progressDialog.show();
+        }
+
+    }
+
+    private void hideDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.hide();
+        }
+    }
+
 }

@@ -48,13 +48,15 @@ public class AdapterCustomer extends ArrayAdapter<Customer> {
         }
 
         Customer customer = getItem(position);
-        if(customer.getName()!=null)
-        viewHolder.name.setText(customer.getName());
-        if(customer.getPhone_number()!=null)
-        viewHolder.phone_number.setText(customer.getPhone_number());
-        if(customer.getLateDateItem()!=null){
+        if (customer.getName() != null)
+            viewHolder.name.setText(customer.getName());
+        else
+            viewHolder.name.setText(getContext().getResources().getText(R.string.not_name));
+        if (customer.getPhone_number() != null)
+            viewHolder.phone_number.setText(customer.getPhone_number());
+        if (customer.getLateDateItem() != null) {
             viewHolder.lastDateItem.setText(ft.format(customer.getLateDateItem()));
-        }else{
+        } else {
             viewHolder.lastDateItem.setText(getContext().getResources().getText(R.string.not_transfer));
         }
 
