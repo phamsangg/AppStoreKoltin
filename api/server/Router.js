@@ -57,7 +57,7 @@ router.get('/update/customer', function (req, res) {
     var address = req.query.address;
     var name = req.query.name;
     var cmt = req.query.cmt;
-    var date = dateFormat(req.query.date, "yyyy-mm-dd HH:MM:ss");
+    var date = parseInt(req.query.date);
 
     Customer.update(phone, address, name, cmt, function (err, count) {
         if (err) {
