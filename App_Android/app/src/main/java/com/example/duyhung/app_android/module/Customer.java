@@ -13,14 +13,14 @@ public class Customer implements Serializable {
     private String name;
     private String address;
     private String cmt;
-    private Date date;
-    private Date lateDateItem;
+    private Long date;
+    private Long lateDateItem;
 
 
     public Customer() {
     }
 
-    public Customer(String phoneNumber, String name, String address, String cmt, Date date, Date lateDateItem) {
+    public Customer(String phoneNumber, String name, String address, String cmt, Long date, Long lateDateItem) {
         this.phone_number = phoneNumber;
         this.name = name;
         this.address = address;
@@ -29,11 +29,11 @@ public class Customer implements Serializable {
         this.lateDateItem = lateDateItem;
     }
 
-    public Date getDate() {
+    public Long getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Long date) {
         this.date = date;
     }
 
@@ -69,11 +69,11 @@ public class Customer implements Serializable {
         this.cmt = cmt;
     }
 
-    public Date getLateDateItem() {
+    public Long getLateDateItem() {
         return lateDateItem;
     }
 
-    public void setLateDateItem(Date lateDateItem) {
+    public void setLateDateItem(Long lateDateItem) {
         this.lateDateItem = lateDateItem;
     }
 

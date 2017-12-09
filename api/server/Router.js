@@ -1,7 +1,5 @@
 var express = require('express');
 var router = express();
-var dateFormat = require('dateformat');
-var parseString = require('xml2js').parseString;
 
 var Customer = require('./model/Customer');
 var Transfer = require('./model/Transfer');

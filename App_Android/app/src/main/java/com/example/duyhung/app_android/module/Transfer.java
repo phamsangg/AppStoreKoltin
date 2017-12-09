@@ -9,18 +9,18 @@ import java.util.Date;
 
 public class Transfer implements Serializable{
 
-    private Date date_transfer;
+    private Long date_transfer;
     private int money;
     private String item;
 
     public Transfer() {
     }
 
-    public Date getDate_transfer() {
+    public Long getDate_transfer() {
         return date_transfer;
     }
 
-    public void setDate_transfer(Date date_transfer) {
+    public void setDate_transfer(Long date_transfer) {
         this.date_transfer = date_transfer;
     }
 

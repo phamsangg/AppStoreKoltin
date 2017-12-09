@@ -9,8 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.EditText;
@@ -24,19 +22,19 @@ import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.customzbleAdapter.AdapterTranfer;
 import com.example.duyhung.app_android.module.Customer;
+import com.example.duyhung.app_android.module.Transfer;
 import com.example.duyhung.app_android.service.modules.Result;
 import com.example.duyhung.app_android.service.modules.Sum;
-import com.example.duyhung.app_android.module.Transfer;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
 import com.google.gson.Gson;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
+import static com.example.duyhung.app_android.Config.ft;
 
 public class ActivityTransfer extends AppCompatActivity {
 
@@ -223,7 +221,6 @@ public class ActivityTransfer extends AppCompatActivity {
     }
 
     private void setText(Customer customer) {
-        SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
         if (customer.getName() != null)
             name.setText(customer.getName());
         else

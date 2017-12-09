@@ -13,6 +13,7 @@ import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackNewTransferNonCustomer;
 import com.example.duyhung.app_android.module.Transfer;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -81,13 +82,13 @@ public class ScreenSlidePageFragmentAddTransfer extends Fragment {
     private Transfer getData() {
         Transfer transfer = new Transfer();
 
-        Date date = new Date();
+        Calendar now = Calendar.getInstance();
         transfer.setItem(nameProduct.getText().toString().trim());
         String money = summoney.getText().toString().trim();
         money = money.replaceAll("\\s+", "");
         money = money.replaceAll("\\s?", "");
         transfer.setMoney(Integer.parseInt(money));
-        transfer.setDate_transfer(date);
+        transfer.setDate_transfer(now.getTimeInMillis());
         return transfer;
     }
 

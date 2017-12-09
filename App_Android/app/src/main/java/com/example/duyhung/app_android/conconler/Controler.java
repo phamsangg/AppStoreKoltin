@@ -186,7 +186,7 @@ public class Controler {
         }
     }
 
-    public void statisticalTransfer(Date beginDate, Date endDate, int limit, int offset, CallBackAction callBackAction) {
+    public void statisticalTransfer(Long beginDate, Long endDate, int limit, int offset, CallBackAction callBackAction) {
 
         try {
             String begin = URLEncoder.encode(beginDate.toString(), "utf-8");

@@ -19,6 +19,7 @@ import com.example.duyhung.app_android.conconler.Controler;
 import com.example.duyhung.app_android.service.modules.Result;
 import com.example.duyhung.app_android.module.Transfer;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import static com.example.duyhung.app_android.Config.URL;
@@ -37,7 +38,7 @@ public class AddTransfer extends DialogFragment {
     CallBackObject callBackObject;
 
 
-    public AddTransfer newInstance(String phoneNumber, Activity activity,CallBackObject callBackObject) {
+    public AddTransfer newInstance(String phoneNumber, Activity activity, CallBackObject callBackObject) {
         AddTransfer frg = new AddTransfer();
         frg.phoneNumber = phoneNumber;
         frg.activity = activity;
@@ -96,13 +97,13 @@ public class AddTransfer extends DialogFragment {
     private Transfer getData() {
         Transfer transfer = new Transfer();
 
-        Date date = new Date();
+        Calendar now = Calendar.getInstance();
         transfer.setItem(item.getText().toString().trim());
-        String money =sumMoney.getText().toString().trim();
-        money = money.replaceAll("\\s+","");
-        money = money.replaceAll("\\s?","");
+        String money = sumMoney.getText().toString().trim();
+        money = money.replaceAll("\\s+", "");
+        money = money.replaceAll("\\s?", "");
         transfer.setMoney(Integer.parseInt(money));
-        transfer.setDate_transfer(date);
+        transfer.setDate_transfer(now.getTimeInMillis());
         return transfer;
     }
 

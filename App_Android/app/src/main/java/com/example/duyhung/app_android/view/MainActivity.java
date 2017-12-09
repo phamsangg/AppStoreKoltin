@@ -53,6 +53,7 @@ import com.google.gson.Gson;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -257,7 +258,7 @@ public class MainActivity extends AppCompatActivity {
         statistical.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this,StatisticalActivity.class);
+                Intent intent = new Intent(MainActivity.this, StatisticalActivity.class);
                 startActivity(intent);
             }
         });
@@ -606,9 +607,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Customer getCustomer(String phone) {
+        Calendar now = Calendar.getInstance();
         Customer customer = new Customer();
         customer.setPhone_number(phone);
-        customer.setDate(new Date());
+        customer.setDate(now.getTimeInMillis());
         return customer;
     }
 

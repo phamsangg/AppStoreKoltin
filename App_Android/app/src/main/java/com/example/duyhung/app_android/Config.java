@@ -29,5 +29,5 @@ public interface Config {
     int TIMEOUT_MILLISEC = 30000;  // = 10 seconds
     int LIMIT = 20;
 
-    SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  hh:mm:ss");
+    SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy  HH:MM:ss");
 }

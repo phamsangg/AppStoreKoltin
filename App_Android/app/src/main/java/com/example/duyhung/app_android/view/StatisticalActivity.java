@@ -44,7 +44,7 @@ public class StatisticalActivity extends AppCompatActivity {
     private Date beginDate;
     private Date endDate = new Date();
 
-    SimpleDateFormat ft = new SimpleDateFormat("dd/MM/yyyy");
+    SimpleDateFormat f = new SimpleDateFormat("dd/MM/yyyy");
 
     final int DATE_PICKER_TO = 0;
     final int DATE_PICKER_FROM = 1;
@@ -56,6 +56,7 @@ public class StatisticalActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_statistical);
+        overridePendingTransition(R.anim.slide_right_to_left_in, R.anim.slide_right_to_left_out);
 
         init();
         register();
@@ -165,7 +166,7 @@ public class StatisticalActivity extends AppCompatActivity {
         calendar.set(Calendar.DATE, day);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.YEAR, year);
-        beginDay.setText(ft.format(calendar.getTime()));
+        beginDay.setText(f.format(calendar.getTime()));
         return calendar.getTime();
     }
 
@@ -179,7 +180,7 @@ public class StatisticalActivity extends AppCompatActivity {
         calendar.set(Calendar.DATE, day);
         calendar.set(Calendar.MONTH, month);
         calendar.set(Calendar.YEAR, year);
-        endDay.setText(ft.format(calendar.getTime()));
+        endDay.setText(f.format(calendar.getTime()));
         return calendar.getTime();
     }
 
@@ -199,7 +200,7 @@ public class StatisticalActivity extends AppCompatActivity {
             viewLoadingFooter.setVisibility(View.VISIBLE);
 
         Controler controler = new Controler(this, URL);
-        controler.statisticalTransfer(beginDate, endDate, limit, offset, new CallBackAction() {
+        controler.statisticalTransfer(beginDate.getTime(), endDate.getTime(), limit, offset, new CallBackAction() {
             @Override
             public void excute(Result result) {
                 View view = getWindow().getDecorView().findViewById(android.R.id.content);
@@ -228,5 +229,11 @@ public class StatisticalActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_left_to_right_in, R.anim.slide_left_to_right_out);
     }
 }

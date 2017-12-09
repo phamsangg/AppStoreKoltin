@@ -14,6 +14,7 @@ import com.example.duyhung.app_android.R;
 import com.example.duyhung.app_android.callback.CallBackObject;
 import com.example.duyhung.app_android.module.Customer;
 
+import java.util.Calendar;
 import java.util.Date;
 
 /**
@@ -96,7 +97,7 @@ public class ScreenSlidePageFragmentAddCustomer extends Fragment {
 
     private Customer create() {
         Customer customer = new Customer();
-        Date date = new Date();
+        Calendar now = Calendar.getInstance();
         customer.setAddress(address.getText().toString().trim());
         customer.setCmt(cmt.getText().toString().trim());
         customer.setName(name.getText().toString().trim());
@@ -104,7 +105,7 @@ public class ScreenSlidePageFragmentAddCustomer extends Fragment {
         phone = phone.replaceAll("\\s+", "");
         phone = phone.replaceAll("\\s?", "");
         customer.setPhone_number(phone);
-        customer.setDate(date);
+        customer.setDate(now.getTimeInMillis());
         return customer;
     }
 
