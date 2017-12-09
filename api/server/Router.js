@@ -134,4 +134,22 @@ router.get('/get/transfer/sum', function (req, res) {
     });
 });
 
+router.get('/get/alltransfer',function (req,res) {
+
+    var limited = parseInt(req.query.limit);
+    var offseted = parseInt(req.query.offset);
+    var begin = dateFormat(req.query.begin, "yyyy-mm-dd HH:MM:ss");
+    var end = dateFormat(req.query.end, "yyyy-mm-dd HH:MM:ss");
+    console.log(begin);
+    console.log(end);
+
+    Transfer.getListTransfer(begin,end,limited,offseted,function (err,row) {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(row);
+        }
+    });
+});
+
 module.exports = router;

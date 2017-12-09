@@ -13,6 +13,7 @@ public interface Config {
 
     String GET_CUSTOMER = "/get/customer";
     String GET_TRANSFER = "/get/transfer";
+    String GET_ALLTRANSFER = "/get/alltransfer";
     String INSERT_TRANSFER = "/insert/transfer";
     String INSERT_CUSTOMER = "/insert/customer";
     String GET_SUM = "/get/transfer/sum";

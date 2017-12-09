@@ -76,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private ListView listViewCommingCall;
     private TextView noItem;
+    private ImageView statistical;
     private ImageView open;
     private FloatingActionButton fab;
     private ProgressDialog progressDialog;
@@ -115,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         fab = findViewById(R.id.fab);
         listView = (ListView) findViewById(R.id.lvCustomer);
         open = findViewById(R.id.open_navigation);
+        statistical = findViewById(R.id.open_statistical);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         listViewCommingCall = findViewById(R.id.list_comming_call);
         noItem = findViewById(R.id.txt_no_item);
@@ -249,6 +251,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 mDrawerLayout.openDrawer(Gravity.START);
+            }
+        });
+
+        statistical.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this,StatisticalActivity.class);
+                startActivity(intent);
             }
         });
 

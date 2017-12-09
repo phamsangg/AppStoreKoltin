@@ -15,8 +15,10 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Date;
 import java.util.List;
 
+import static com.example.duyhung.app_android.Config.GET_ALLTRANSFER;
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER;
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER_LIST_NAME;
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER_PHONE;
@@ -182,6 +184,21 @@ public class Controler {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public void statisticalTransfer(Date beginDate, Date endDate, int limit, int offset, CallBackAction callBackAction) {
+
+        try {
+            String begin = URLEncoder.encode(beginDate.toString(), "utf-8");
+            String end = URLEncoder.encode(endDate.toString(), "utf-8");
+
+            url += GET_ALLTRANSFER + "?begin=" + begin + "&end=" + end + "&limit=" + limit + "&offset=" + offset;
+            new AsyncGetData(activity, callBackAction, url).execute();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return;
     }
 
 }

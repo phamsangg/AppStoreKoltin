@@ -19,4 +19,7 @@
     <string name="not_info">no infomation</string>
     <string name="title_edit">EDIT</string>
     <string name="title_update">UPDATE</string>
+
+    <string name="title_date_begin">Ngày bắt đầu</string>
+    <string name="title_date_end">Ngày kết thúc</string>
 </resources>

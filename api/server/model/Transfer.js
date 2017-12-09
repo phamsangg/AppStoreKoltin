@@ -12,7 +12,12 @@ var Transfer = {
 
     getSumMoney: function (phone, Callback) {
         return db.query('select sum(money) as sum from transfer where customer_phone_number = ?', [phone], Callback);
+    },
+
+    getListTransfer: function (begin, end, limit, offset, Callback) {
+        return db.query('select * from transfer where date_transfer < ? and date_transfer > ? order by date_transfer desc limit ? offset ?', [end, begin, limit, offset], Callback);
     }
+
 };
 
 module.exports = Transfer;
