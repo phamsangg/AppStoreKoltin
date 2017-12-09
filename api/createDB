@@ -4,15 +4,16 @@ create table customer(
 phone_number int(11) not null primary key ,
 `name` nvarchar(250) not null,
  cmt int not null,
- address nvarchar(250) not null
+ address nvarchar(250) not null,
+ date_create bigint
 )
 
 
 create table transfer(
 id int not null auto_increment primary key,
-date_tranfer datetime not null,
-item nvarchar(250) not null,
+date_tranfer bigint ,
+item nvarchar(250) ,
 money int not null,
-customer_phone_number int(11) not null,
+customer_phone_number int(11),
 foreign key(customer_phone_number) references customer(phone_number)
 )

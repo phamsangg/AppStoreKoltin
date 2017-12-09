@@ -12,7 +12,7 @@ router.get('/insert/customer', function (req, res) {
     var address = req.query.address;
     var name = req.query.name;
     var cmt = req.query.cmt;
-    var date = dateFormat(req.query.date, "yyyy-mm-dd HH:MM:ss");
+    var date = parseInt(req.query.date);
 
     Customer.addCustomer(phone, address, name, cmt, date, function (err, count) {
         if (err) {
@@ -25,7 +25,7 @@ router.get('/insert/customer', function (req, res) {
 
 router.get('/insert/transfer', function (req, res) {
 
-    var date = dateFormat(req.query.date_tranfer, "yyyy-mm-dd HH:MM:ss");
+    var date = parseInt(req.query.date_tranfer);
     var money = req.query.money;
     var item = req.query.item;
     var phone = req.query.customer_phone_number
@@ -53,7 +53,7 @@ router.get('/get/customer', function (req, res) {
     });
 });
 
-router.get('/update/customer',function (req,res) {
+router.get('/update/customer', function (req, res) {
 
     var phone = req.query.phone_number;
     var address = req.query.address;
@@ -134,16 +134,16 @@ router.get('/get/transfer/sum', function (req, res) {
     });
 });
 
-router.get('/get/alltransfer',function (req,res) {
+router.get('/get/alltransfer', function (req, res) {
 
     var limited = parseInt(req.query.limit);
     var offseted = parseInt(req.query.offset);
-    var begin = dateFormat(req.query.begin, "yyyy-mm-dd HH:MM:ss");
-    var end = dateFormat(req.query.end, "yyyy-mm-dd HH:MM:ss");
+    var begin = parseInt(req.query.begin);
+    var end = parseInt(req.query.end);
     console.log(begin);
     console.log(end);
 
-    Transfer.getListTransfer(begin,end,limited,offseted,function (err,row) {
+    Transfer.getListTransfer(begin, end, limited, offseted, function (err, row) {
         if (err) {
             res.status(500).send(err);
         } else {
