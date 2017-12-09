@@ -59,6 +59,7 @@ import java.util.List;
 
 import static com.example.duyhung.app_android.Config.GET_CUSTOMER_PHONE;
 import static com.example.duyhung.app_android.Config.GET_LAZYLOAD;
+import static com.example.duyhung.app_android.Config.GET_RESULT_EDITPROFILE_CUSTOMER;
 import static com.example.duyhung.app_android.Config.GET_RESULT_NEW_CUSTOMER;
 import static com.example.duyhung.app_android.Config.GET_RESULT_NEW_TRANSFER;
 import static com.example.duyhung.app_android.Config.GET_RESULT_PHONE;
@@ -154,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Customer customer = (Customer) adapterView.getItemAtPosition(i);
-                startTransferActivity(customer);
+                startTransferActivity(customer, i);
             }
         });
 
@@ -385,7 +386,7 @@ public class MainActivity extends AppCompatActivity {
                                 customer.setAddress(myObjects.get(0).getAddress());
                                 customer.setCmt(myObjects.get(0).getCmt());
                                 customer.setLateDateItem(myObjects.get(0).getLateDateItem());
-                                startTransferActivity(customer);
+                                startTransferActivity(customer, -1);
                             }
 
                         } catch (Exception e) {
@@ -446,10 +447,11 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    private void startTransferActivity(Customer customer) {
+    private void startTransferActivity(Customer customer, int i) {
         Intent nextActivity = new Intent(MainActivity.this, ActivityTransfer.class);
         nextActivity.putExtra("customer", (Serializable) customer);
-        startActivity(nextActivity);
+        nextActivity.putExtra("solution", i);
+        startActivityForResult(nextActivity, REQUEST_CODE_FOR_RESULT);
     }
 
     private void readHistoryCall(final String type, final int lastItem) {
@@ -541,13 +543,24 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_FOR_RESULT) {
             try {
                 Customer customer = (Customer) data.getExtras().getSerializable(GET_RESULT_NEW_CUSTOMER);
+                if(customer!=null)
                 addCustomer(customer, null);
+            } catch (NullPointerException e) {
+            }
+
+            try {
+                Customer customer = (Customer) data.getExtras().getSerializable(GET_RESULT_EDITPROFILE_CUSTOMER);
+                int solution = data.getExtras().getInt("solution");
+                if(customer!=null && solution!=-1)
+                update(customer, solution);
+
             } catch (NullPointerException e) {
             }
 
             try {
                 Transfer transfer = (Transfer) data.getExtras().getSerializable(GET_RESULT_NEW_TRANSFER);
                 String phone = data.getStringExtra(GET_CUSTOMER_PHONE);
+                if(transfer!=null)
                 addCustomer(getCustomer(phone), transfer);
 
             } catch (NullPointerException e) {
@@ -556,6 +569,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
+    }
+
+    private void update(Customer customer, int solution) {
+
+        customerList.get(solution).setLateDateItem(customer.getLateDateItem());
+        customerList.get(solution).setDate(customer.getDate());
+        customerList.get(solution).setName(customer.getName());
+        customerList.get(solution).setCmt(customer.getCmt());
+        customerList.get(solution).setAddress(customer.getAddress());
+
+        adapterCustomer.notifyDataSetChanged();
     }
 
     private void addCustomer(final Customer customer, final Transfer transfer) {

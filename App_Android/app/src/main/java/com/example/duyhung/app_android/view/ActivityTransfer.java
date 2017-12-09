@@ -2,6 +2,7 @@ package com.example.duyhung.app_android.view;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -28,10 +29,12 @@ import com.example.duyhung.app_android.service.modules.Sum;
 import com.example.duyhung.app_android.view.dialog.AddTransfer;
 import com.google.gson.Gson;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.example.duyhung.app_android.Config.GET_RESULT_EDITPROFILE_CUSTOMER;
 import static com.example.duyhung.app_android.Config.LIMIT;
 import static com.example.duyhung.app_android.Config.URL;
 import static com.example.duyhung.app_android.Config.ft;
@@ -42,10 +45,12 @@ public class ActivityTransfer extends AppCompatActivity {
     private AdapterTranfer adapterTranfer;
     private ListView listView;
     private Customer customer;
+    private Customer customerUpdate;
     private List<Transfer> transferList;
     View viewLoadingFooter;
     private int prevItem = 0;
     private long numberMoney = 0L;
+    private int solution;
 
     private EditText name;
     private EditText phoneNumber;
@@ -67,6 +72,8 @@ public class ActivityTransfer extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         customer = (Customer) getIntent().getSerializableExtra("customer");
+        customerUpdate = (Customer) getIntent().getSerializableExtra("customer");
+        solution = getIntent().getIntExtra("solution", -1);
         init();
         registerEvent();
         setText(customer);
@@ -146,16 +153,15 @@ public class ActivityTransfer extends AppCompatActivity {
             cancel = false;
 
         if (!cancel) {
-            Customer customer = new Customer();
-            customer.setPhone_number(this.customer.getPhone_number());
-            if (!TextUtils.isEmpty(name.getText()))
-                customer.setName(name.getText().toString().trim());
-            if (!TextUtils.isEmpty(address.getText()))
-                customer.setAddress(address.getText().toString().trim());
-            if (!TextUtils.isEmpty(cmt.getText()))
-                customer.setCmt(cmt.getText().toString().trim());
 
-            setUpdate(customer);
+            if (!TextUtils.isEmpty(name.getText()))
+                customerUpdate.setName(name.getText().toString().trim());
+            if (!TextUtils.isEmpty(address.getText()))
+                customerUpdate.setAddress(address.getText().toString().trim());
+            if (!TextUtils.isEmpty(cmt.getText()))
+                customerUpdate.setCmt(cmt.getText().toString().trim());
+
+            setUpdate(customerUpdate);
         }
 
     }
@@ -188,6 +194,7 @@ public class ActivityTransfer extends AppCompatActivity {
 
                 numberMoney += ((Transfer) object).getMoney();
                 sumMoney.setText(printMoney(String.valueOf(numberMoney)));
+                customerUpdate.setLateDateItem(((Transfer) object).getDate_transfer());
                 adapterTranfer.notifyDataSetChanged();
             }
         }).show(getFragmentManager(), "");
@@ -195,6 +202,10 @@ public class ActivityTransfer extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        Intent intent = new Intent();
+        intent.putExtra(GET_RESULT_EDITPROFILE_CUSTOMER, (Serializable) customerUpdate);
+        intent.putExtra("solution", solution);
+        setResult(Activity.RESULT_OK,intent);
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_left_to_right_in, R.anim.slide_left_to_right_out);
     }
