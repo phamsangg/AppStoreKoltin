@@ -543,16 +543,16 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == REQUEST_CODE_FOR_RESULT) {
             try {
                 Customer customer = (Customer) data.getExtras().getSerializable(GET_RESULT_NEW_CUSTOMER);
-                if(customer!=null)
-                addCustomer(customer, null);
+                if (customer != null)
+                    addCustomer(customer);
             } catch (NullPointerException e) {
             }
 
             try {
                 Customer customer = (Customer) data.getExtras().getSerializable(GET_RESULT_EDITPROFILE_CUSTOMER);
                 int solution = data.getExtras().getInt("solution");
-                if(customer!=null && solution!=-1)
-                update(customer, solution);
+                if (customer != null && solution != -1)
+                    update(customer, solution);
 
             } catch (NullPointerException e) {
             }
@@ -560,8 +560,8 @@ public class MainActivity extends AppCompatActivity {
             try {
                 Transfer transfer = (Transfer) data.getExtras().getSerializable(GET_RESULT_NEW_TRANSFER);
                 String phone = data.getStringExtra(GET_CUSTOMER_PHONE);
-                if(transfer!=null)
-                addCustomer(getCustomer(phone), transfer);
+                if (transfer != null)
+                    addTransfer(transfer, phone);
 
             } catch (NullPointerException e) {
             }
@@ -582,7 +582,7 @@ public class MainActivity extends AppCompatActivity {
         adapterCustomer.notifyDataSetChanged();
     }
 
-    private void addCustomer(final Customer customer, final Transfer transfer) {
+    private void addCustomer(final Customer customer) {
         showDialog();
         Controler controler = new Controler(this, URL);
         controler.addCustomer(new CallBackAction() {
@@ -591,9 +591,6 @@ public class MainActivity extends AppCompatActivity {
                 if (result != null) {
                     if (result.getStatus() == 200) {
                         Toast.makeText(getBaseContext(), "create successfully", Toast.LENGTH_SHORT).show();
-                        if (transfer != null) {
-                            addTransfer(transfer, customer.getPhone_number());
-                        }
                         customerList.add(0, customer);
                         adapterCustomer.notifyDataSetChanged();
                     } else {

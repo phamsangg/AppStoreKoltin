@@ -26,6 +26,7 @@ import static com.example.duyhung.app_android.Config.GET_SUM;
 import static com.example.duyhung.app_android.Config.GET_TRANSFER;
 import static com.example.duyhung.app_android.Config.INSERT_CUSTOMER;
 import static com.example.duyhung.app_android.Config.INSERT_TRANSFER;
+import static com.example.duyhung.app_android.Config.SUGGEST_CUSTOMER;
 import static com.example.duyhung.app_android.Config.UPDATE_CUSTOMER;
 
 
@@ -47,6 +48,23 @@ public class Controler {
 
 
         url += GET_CUSTOMER + "?limit=" + limit + "&offset=" + offset;
+        if (like != null && !like.equals("")) {
+            try {
+                like = URLEncoder.encode(like, "utf-8");
+                url += "&like=" + like;
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        new AsyncGetData(activity, callBackAction, url).execute();
+        return;
+    }
+
+    public void getListCustomeAutoComplate(int limit, String like, CallBackAction callBackAction) {
+
+        url += SUGGEST_CUSTOMER + "?limit=" + limit;
         if (like != null && !like.equals("")) {
             try {
                 like = URLEncoder.encode(like, "utf-8");

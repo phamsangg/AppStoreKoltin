@@ -21,6 +21,20 @@ router.get('/insert/customer', function (req, res) {
     });
 });
 
+router.get('/suggest/search_customer', function (req, res) {
+
+    var limited = parseInt(req.query.limit);
+    var liked = req.query.like;
+
+    Customer.getlistCustomerAutoComplate(limited, liked, function (err, row) {
+        if (err) {
+            res.status(500).send(err);
+        } else {
+            res.status(200).send(row);
+        }
+    });
+});
+
 router.get('/insert/transfer', function (req, res) {
 
     var date = parseInt(req.query.date_tranfer);

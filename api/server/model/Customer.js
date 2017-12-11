@@ -46,7 +46,13 @@ var Customer = {
         if (cmt == 'undefined')
             return db.query('update customer set name  = ?, address = ? where phone_number = ?', [name, address, phone], Callback);
         return db.query('update customer set name  = ?, cmt = ? , address = ? where phone_number = ?', [name, cmt, address, phone], Callback);
-    }
+    },
+
+    getlistCustomerAutoComplate: function (limit, liked, Callback) {
+
+        return db.query('select customer.phone_number as phoneNumber,customer.name' +
+            ' from customer where name like ? or phone_number like ? order by date_create desc limit ?', [liked, liked, limit], Callback);
+    },
 };
 
 module.exports = Customer;

@@ -4,15 +4,15 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:paddingTop="70dp"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#efefed"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingLeft="40dp"
+        android:paddingRight="40dp"
+        android:paddingTop="70dp">
 
-        <EditText
+        <com.example.duyhung.app_android.screen_slide_viewpager.DelayAutoComplateTextview
             android:id="@+id/phone_number"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -22,8 +22,8 @@
             android:layout_marginRight="15dp"
             android:background="#ffffff"
             android:hint="Số điện thoại khách hàng"
-            android:inputType="textPhonetic|number|numberSigned"
             android:padding="10dp"
+            android:maxLines="1"
             android:textSize="14dp" />
 
         <EditText

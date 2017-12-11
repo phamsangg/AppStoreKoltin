@@ -1,20 +1,36 @@
 package com.example.duyhung.app_android.view.fragment;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 
 import com.example.duyhung.app_android.R;
+import com.example.duyhung.app_android.callback.CallBackAction;
 import com.example.duyhung.app_android.callback.CallBackNewTransferNonCustomer;
+import com.example.duyhung.app_android.conconler.Controler;
+import com.example.duyhung.app_android.customzbleAdapter.AdapterAutoComplete;
+import com.example.duyhung.app_android.module.CustomerAutocomplete;
 import com.example.duyhung.app_android.module.Transfer;
+import com.example.duyhung.app_android.screen_slide_viewpager.DelayAutoComplateTextview;
+import com.example.duyhung.app_android.service.modules.Result;
+import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.List;
+
+import static com.example.duyhung.app_android.Config.LIMIT;
+import static com.example.duyhung.app_android.Config.URL;
 
 /**
  * Created by thetainguyen on 06/12/17.
@@ -22,12 +38,13 @@ import java.util.Date;
 
 public class ScreenSlidePageFragmentAddTransfer extends Fragment {
 
-    private EditText phoneNumber;
+    private DelayAutoComplateTextview phoneNumber;
     private EditText summoney;
     private EditText nameProduct;
     private Button ok;
     private Button clean;
     private String phone;
+    private AdapterAutoComplete adapterAutoComplete;
 
     CallBackNewTransferNonCustomer callBackNewTransferNonCustomer;
 
@@ -57,6 +74,11 @@ public class ScreenSlidePageFragmentAddTransfer extends Fragment {
         nameProduct = view.findViewById(R.id.name_product);
         ok = view.findViewById(R.id.btn_ok);
         clean = view.findViewById(R.id.btn_clean);
+        adapterAutoComplete = new AdapterAutoComplete(getContext());
+        phoneNumber.setDropDownAnchor(R.id.phone_number);
+        phoneNumber.setThreshold(1);
+        phoneNumber.setAutoCompleteDelay(500);
+        phoneNumber.setAdapter(adapterAutoComplete);
     }
 
     private void registerEvent() {
@@ -77,7 +99,17 @@ public class ScreenSlidePageFragmentAddTransfer extends Fragment {
                 summoney.setText("");
             }
         });
+
+        phoneNumber.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                CustomerAutocomplete customerAutocomplete = (CustomerAutocomplete) adapterView.getItemAtPosition(i);
+                phoneNumber.setText(customerAutocomplete.getPhoneNumber());
+            }
+        });
+
     }
+
 
     private Transfer getData() {
         Transfer transfer = new Transfer();
