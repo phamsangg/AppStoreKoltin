@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,8 +88,7 @@ public class ScreenSlidePageFragmentAddCustomer extends Fragment {
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!address.getText().toString().trim().equals("") && !cmt.getText().toString().trim().equals("")
-                        && !name.getText().toString().trim().equals("") && !phoneNumber.getText().toString().trim().equals("")) {
+                if (!TextUtils.isEmpty(phoneNumber.getText())) {
                     callBackObject.returnObject(create());
                 }
             }
