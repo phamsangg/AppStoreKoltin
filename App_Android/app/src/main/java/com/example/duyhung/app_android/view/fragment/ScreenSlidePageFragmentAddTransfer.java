@@ -86,8 +86,8 @@ public class ScreenSlidePageFragmentAddTransfer extends Fragment {
             @Override
             public void onClick(View view) {
                 if (!nameProduct.getText().toString().trim().equals("") && !summoney.getText().toString().trim().equals("")) {
+                    callBackNewTransferNonCustomer.excute(getData(), phoneNumber.getText().toString().trim());
                 }
-                callBackNewTransferNonCustomer.excute(getData(), phoneNumber.getText().toString().trim());
             }
         });
 
